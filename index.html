@@ -63,6 +63,9 @@
     .callout { border-left: 3px solid; padding: 12px 16px; border-radius: 0 var(--radius) var(--radius) 0; margin-top: 12px; font-size: 0.88rem; line-height: 1.55; }
     .callout.warn { border-color: var(--yellow); background: var(--yellow-bg); color: var(--yellow); }
     .callout strong { display: block; margin-bottom: 3px; }
+    .faq { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; }
+    .faq-q { font-weight: 700; font-size: 1rem; margin-bottom: 10px; }
+    .faq-a { font-size: 0.93rem; color: var(--muted); line-height: 1.65; }
     footer { padding: 40px 0 48px; font-size: 0.85rem; color: var(--muted); line-height: 1.9; }
     footer a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
     footer a:hover { color: var(--red); }
@@ -113,14 +116,14 @@
           <span class="icon">&#9889;</span>
           <div class="body">
             <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. A dropped connection leaves partial execution &#8212; commands ran, cleanup didn&#8217;t.</p>
+            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
             <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect curl&#8217;s User-Agent or response-read timing and serve different content to a pipe than to a browser. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
           </div>
         </li>
         <li>
@@ -241,6 +244,14 @@
         </div>
       </section>
 
+      <section>
+        <h2>Common Objection</h2>
+        <div class="faq">
+          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
+          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+        </div>
+      </section>
+
       <footer>
         <p>Inspired by <a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> and <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a> &#8212; single-purpose pages that name common anti-patterns so you can link instead of explain.</p>
         <p>Share this page next time someone pastes a <code>curl | bash</code> in your team chat.</p>
@@ -272,14 +283,14 @@
           <span class="icon">&#9889;</span>
           <div class="body">
             <strong>Bash &#1079;&#1072;&#1087;&#1091;&#1089;&#1082;&#1072;&#1077;&#1090;&#1089;&#1103; &#1076;&#1086; &#1079;&#1072;&#1074;&#1077;&#1088;&#1096;&#1077;&#1085;&#1080;&#1103; &#1079;&#1072;&#1075;&#1088;&#1091;&#1079;&#1082;&#1080;</strong>
-            <p>&#1055;&#1072;&#1081;&#1087; &#1088;&#1072;&#1073;&#1086;&#1090;&#1072;&#1077;&#1090; &#1074; &#1088;&#1077;&#1072;&#1083;&#1100;&#1085;&#1086;&#1084; &#1074;&#1088;&#1077;&#1084;&#1077;&#1085;&#1080;. Bash &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1103;&#1077;&#1090; &#1089;&#1090;&#1088;&#1086;&#1082;&#1080; &#1087;&#1086; &#1084;&#1077;&#1088;&#1077; &#1087;&#1086;&#1089;&#1090;&#1091;&#1087;&#1083;&#1077;&#1085;&#1080;&#1103;. &#1054;&#1073;&#1088;&#1099;&#1074; &#1089;&#1086;&#1077;&#1076;&#1080;&#1085;&#1077;&#1085;&#1080;&#1103; &#1086;&#1089;&#1090;&#1072;&#1074;&#1083;&#1103;&#1077;&#1090; &#1095;&#1072;&#1089;&#1090;&#1080;&#1095;&#1085;&#1086;&#1077; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1077; &#8212; &#1082;&#1086;&#1084;&#1072;&#1085;&#1076;&#1099; &#1086;&#1090;&#1088;&#1072;&#1073;&#1086;&#1090;&#1072;&#1083;&#1080;, &#1086;&#1090;&#1082;&#1072;&#1090; &#8212; &#1085;&#1077;&#1090;.</p>
+            <p>&#1055;&#1072;&#1081;&#1087; &#1088;&#1072;&#1073;&#1086;&#1090;&#1072;&#1077;&#1090; &#1074; &#1088;&#1077;&#1072;&#1083;&#1100;&#1085;&#1086;&#1084; &#1074;&#1088;&#1077;&#1084;&#1077;&#1085;&#1080;. &#1054;&#1073;&#1088;&#1099;&#1074; &#1089;&#1086;&#1077;&#1076;&#1080;&#1085;&#1077;&#1085;&#1080;&#1103; &#1085;&#1072; &#1089;&#1077;&#1088;&#1077;&#1076;&#1080;&#1085;&#1077; &#8212; &#1095;&#1072;&#1089;&#1090;&#1080;&#1095;&#1085;&#1086;&#1077; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1077;: <code>rm -r /usr/share/program</code> &#1084;&#1086;&#1078;&#1077;&#1090; &#1091;&#1089;&#1077;&#1095;&#1100;&#1089;&#1103; &#1076;&#1086; <code>rm -r /usr</code>. &#1050;&#1086;&#1084;&#1072;&#1085;&#1076;&#1099; &#1086;&#1090;&#1088;&#1072;&#1073;&#1086;&#1090;&#1072;&#1083;&#1080;, &#1086;&#1090;&#1082;&#1072;&#1090; &#8212; &#1085;&#1077;&#1090;.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
             <strong>&#1057;&#1077;&#1088;&#1074;&#1077;&#1088; &#1079;&#1085;&#1072;&#1077;&#1090; &#1095;&#1090;&#1086; &#1074;&#1099; &#1087;&#1072;&#1081;&#1087;&#1080;&#1090;&#1077; &#8212; &#1080; &#1084;&#1086;&#1078;&#1077;&#1090; &#1089;&#1086;&#1083;&#1075;&#1072;&#1090;&#1100;</strong>
-            <p>&#1057;&#1077;&#1088;&#1074;&#1077;&#1088;&#1099; &#1086;&#1087;&#1088;&#1077;&#1076;&#1077;&#1083;&#1103;&#1102;&#1090; User-Agent curl &#1080;&#1083;&#1080; &#1090;&#1072;&#1081;&#1084;&#1080;&#1085;&#1075; &#1095;&#1090;&#1077;&#1085;&#1080;&#1103; &#1086;&#1090;&#1074;&#1077;&#1090;&#1072; &#1080; &#1084;&#1086;&#1075;&#1091;&#1090; &#1086;&#1090;&#1076;&#1072;&#1090;&#1100; &#1076;&#1088;&#1091;&#1075;&#1086;&#1081; &#1082;&#1086;&#1085;&#1090;&#1077;&#1085;&#1090; &#1074; &#1087;&#1072;&#1081;&#1087;. &#171;&#1057;&#1085;&#1072;&#1095;&#1072;&#1083;&#1072; &#1086;&#1090;&#1082;&#1088;&#1086;&#1102; &#1074; &#1073;&#1088;&#1072;&#1091;&#1079;&#1077;&#1088;&#1077;&#187; &#1074;&#1072;&#1089; &#1085;&#1077; &#1079;&#1072;&#1097;&#1080;&#1090;&#1080;&#1090;: &#1090;&#1086; &#1095;&#1090;&#1086; &#1074;&#1099; &#1087;&#1088;&#1086;&#1095;&#1080;&#1090;&#1072;&#1083;&#1080; &#8212; &#1085;&#1077; &#1090;&#1086; &#1095;&#1090;&#1086; &#1079;&#1072;&#1087;&#1091;&#1089;&#1090;&#1080;&#1083;&#1086;&#1089;&#1100;.</p>
+            <p>&#1057;&#1077;&#1088;&#1074;&#1077;&#1088; &#1086;&#1090;&#1087;&#1088;&#1072;&#1074;&#1083;&#1103;&#1077;&#1090; <code>sleep</code> &#1074; &#1085;&#1072;&#1095;&#1072;&#1083;&#1077; &#1089;&#1082;&#1088;&#1080;&#1087;&#1090;&#1072; &#8212; &#1077;&#1089;&#1083;&#1080; bash &#1077;&#1075;&#1086; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1103;&#1077;&#1090;, &#1095;&#1090;&#1077;&#1085;&#1080;&#1077; &#1087;&#1072;&#1081;&#1087;&#1072; &#1087;&#1072;&#1091;&#1079;&#1080;&#1088;&#1091;&#1077;&#1090;, curl &#1073;&#1083;&#1086;&#1082;&#1080;&#1088;&#1091;&#1077;&#1090;&#1089;&#1103;, &#1089;&#1077;&#1088;&#1074;&#1077;&#1088; &#1074;&#1080;&#1076;&#1080;&#1090; &#1079;&#1072;&#1076;&#1077;&#1088;&#1078;&#1082;&#1091; &#8212; &#1092;&#1072;&#1082;&#1090; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1103; &#1087;&#1086;&#1076;&#1090;&#1074;&#1077;&#1088;&#1078;&#1076;&#1105;&#1085;, &#1076;&#1072;&#1083;&#1100;&#1096;&#1077; &#8212; &#1076;&#1088;&#1091;&#1075;&#1086;&#1081; &#1087;&#1077;&#1081;&#1083;&#1086;&#1072;&#1076;. &#171;&#1057;&#1085;&#1072;&#1095;&#1072;&#1083;&#1072; &#1086;&#1090;&#1082;&#1088;&#1086;&#1102; &#1074; &#1073;&#1088;&#1072;&#1091;&#1079;&#1077;&#1088;&#1077;&#187; &#1085;&#1077; &#1087;&#1086;&#1084;&#1086;&#1078;&#1077;&#1090;: &#1090;&#1086; &#1095;&#1090;&#1086; &#1074;&#1099; &#1087;&#1088;&#1086;&#1095;&#1080;&#1090;&#1072;&#1083;&#1080; &#8212; &#1085;&#1077; &#1090;&#1086; &#1095;&#1090;&#1086; &#1079;&#1072;&#1087;&#1091;&#1089;&#1090;&#1080;&#1083;&#1086;&#1089;&#1100;.</p>
           </div>
         </li>
         <li>
@@ -400,6 +411,14 @@
         </div>
       </section>
 
+      <section>
+        <h2>&#1063;&#1072;&#1089;&#1090;&#1086;&#1077; &#1074;&#1086;&#1079;&#1088;&#1072;&#1078;&#1077;&#1085;&#1080;&#1077;</h2>
+        <div class="faq">
+          <p class="faq-q">&#171;&#1053;&#1086; &#1103; &#1076;&#1086;&#1074;&#1077;&#1088;&#1103;&#1102; &#1074;&#1077;&#1085;&#1076;&#1086;&#1088;&#1091;, &#1079;&#1085;&#1072;&#1095;&#1080;&#1090; &#1074;&#1089;&#1105; &#1086;&#1082;?&#187;</p>
+          <p class="faq-a">&#1044;&#1086;&#1074;&#1077;&#1088;&#1080;&#1103; &#1074;&#1077;&#1085;&#1076;&#1086;&#1088;&#1091; &#1085;&#1077;&#1076;&#1086;&#1089;&#1090;&#1072;&#1090;&#1086;&#1095;&#1085;&#1086;. <code>curl | bash</code> &#1076;&#1086;&#1073;&#1072;&#1074;&#1083;&#1103;&#1077;&#1090; attack surface <em>&#1087;&#1086;&#1074;&#1077;&#1088;&#1093;</em> &#1076;&#1086;&#1074;&#1077;&#1088;&#1080;&#1103; &#1074;&#1077;&#1085;&#1076;&#1086;&#1088;&#1091;: &#1074;&#1099; &#1090;&#1072;&#1082;&#1078;&#1077; &#1076;&#1086;&#1074;&#1077;&#1088;&#1103;&#1077;&#1090;&#1077; DNS, CDN, &#1093;&#1086;&#1089;&#1090;&#1080;&#1085;&#1075;&#1091; &#1080; &#1074;&#1089;&#1077;&#1084;, &#1082;&#1090;&#1086; &#1084;&#1086;&#1078;&#1077;&#1090; &#1089;&#1082;&#1086;&#1084;&#1087;&#1088;&#1086;&#1084;&#1077;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1090;&#1100; URL &#1076;&#1086; &#1084;&#1086;&#1084;&#1077;&#1085;&#1090;&#1072; &#1079;&#1072;&#1087;&#1091;&#1089;&#1082;&#1072;. &#1055;&#1072;&#1082;&#1077;&#1090;, &#1091;&#1089;&#1090;&#1072;&#1085;&#1086;&#1074;&#1083;&#1077;&#1085;&#1085;&#1099;&#1081; &#1095;&#1077;&#1088;&#1077;&#1079; &#1087;&#1072;&#1082;&#1077;&#1090;&#1085;&#1099;&#1081; &#1084;&#1077;&#1085;&#1077;&#1076;&#1078;&#1077;&#1088;, &#1087;&#1088;&#1086;&#1093;&#1086;&#1076;&#1080;&#1090; &#1076;&#1086;&#1087;&#1086;&#1083;&#1085;&#1080;&#1090;&#1077;&#1083;&#1100;&#1085;&#1099;&#1077; &#1089;&#1083;&#1086;&#1080; &#1087;&#1088;&#1086;&#1074;&#1077;&#1088;&#1082;&#1080;. &#1056;&#1077;&#1087;&#1091;&#1090;&#1072;&#1094;&#1080;&#1103; &#1074;&#1077;&#1085;&#1076;&#1086;&#1088;&#1072; &#1085;&#1077; &#1076;&#1077;&#1083;&#1072;&#1077;&#1090; &#1084;&#1077;&#1093;&#1072;&#1085;&#1080;&#1079;&#1084; &#1076;&#1086;&#1089;&#1090;&#1072;&#1074;&#1082;&#1080; &#1073;&#1077;&#1079;&#1086;&#1087;&#1072;&#1089;&#1085;&#1099;&#1084;.</p>
+        </div>
+      </section>
+
       <footer>
         <p>&#1042;&#1076;&#1086;&#1093;&#1085;&#1086;&#1074;&#1083;&#1077;&#1085;&#1086; <a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> &#1080; <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a>.</p>
         <p>&#1055;&#1086;&#1076;&#1077;&#1083;&#1080;&#1090;&#1077;&#1089;&#1100; &#1101;&#1090;&#1086;&#1081; &#1089;&#1090;&#1088;&#1072;&#1085;&#1080;&#1094;&#1077;&#1081; &#1074; &#1089;&#1083;&#1077;&#1076;&#1091;&#1102;&#1097;&#1080;&#1081; &#1088;&#1072;&#1079;, &#1082;&#1086;&#1075;&#1076;&#1072; &#1082;&#1090;&#1086;-&#1090;&#1086; &#1074;&#1089;&#1090;&#1072;&#1074;&#1080;&#1090; <code>curl | bash</code> &#1074; &#1095;&#1072;&#1090; &#1082;&#1086;&#1084;&#1072;&#1085;&#1076;&#1099;.</p>
@@ -431,14 +450,14 @@
           <span class="icon">&#9889;</span>
           <div class="body">
             <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. A dropped connection leaves partial execution &#8212; commands ran, cleanup didn&#8217;t.</p>
+            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
             <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect curl&#8217;s User-Agent or response-read timing and serve different content to a pipe than to a browser. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
           </div>
         </li>
         <li>
@@ -559,6 +578,14 @@
         </div>
       </section>
 
+      <section>
+        <h2>Common Objection</h2>
+        <div class="faq">
+          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
+          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+        </div>
+      </section>
+
       <footer>
         <p>Натхненно <a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> та <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a>.</p>
         <p>Поділіться цією сторінкою наступного разу, коли хтось вставить <code>curl | bash</code> у чат команди.</p>
@@ -590,14 +617,14 @@
           <span class="icon">&#9889;</span>
           <div class="body">
             <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. A dropped connection leaves partial execution &#8212; commands ran, cleanup didn&#8217;t.</p>
+            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
             <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect curl&#8217;s User-Agent or response-read timing and serve different content to a pipe than to a browser. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
           </div>
         </li>
         <li>
@@ -718,6 +745,14 @@
         </div>
       </section>
 
+      <section>
+        <h2>Common Objection</h2>
+        <div class="faq">
+          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
+          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+        </div>
+      </section>
+
       <footer>
         <p>Inspirisano <a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> i <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a>.</p>
         <p>Podelite ovu stranicu sledeći put kada neko nalepi <code>curl | bash</code> u timski chat.</p>
@@ -749,14 +784,14 @@
           <span class="icon">&#9889;</span>
           <div class="body">
             <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. A dropped connection leaves partial execution &#8212; commands ran, cleanup didn&#8217;t.</p>
+            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
             <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect curl&#8217;s User-Agent or response-read timing and serve different content to a pipe than to a browser. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
           </div>
         </li>
         <li>
@@ -877,6 +912,14 @@
         </div>
       </section>
 
+      <section>
+        <h2>Common Objection</h2>
+        <div class="faq">
+          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
+          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+        </div>
+      </section>
+
       <footer>
         <p>Inspiré par <a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> et <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a>.</p>
         <p>Partagez cette page la prochaine fois que quelqu’un colle un <code>curl | bash</code> dans le chat de votre équipe.</p>
@@ -908,14 +951,14 @@
           <span class="icon">&#9889;</span>
           <div class="body">
             <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. A dropped connection leaves partial execution &#8212; commands ran, cleanup didn&#8217;t.</p>
+            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
             <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect curl&#8217;s User-Agent or response-read timing and serve different content to a pipe than to a browser. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
           </div>
         </li>
         <li>
@@ -1036,6 +1079,14 @@
         </div>
       </section>
 
+      <section>
+        <h2>Common Objection</h2>
+        <div class="faq">
+          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
+          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+        </div>
+      </section>
+
       <footer>
         <p>Inspiriert von <a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> und <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a>.</p>
         <p>Teilt diese Seite, wenn jemand ein <code>curl | bash</code> in euren Team-Chat postet.</p>
@@ -1067,14 +1118,14 @@
           <span class="icon">&#9889;</span>
           <div class="body">
             <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. A dropped connection leaves partial execution &#8212; commands ran, cleanup didn&#8217;t.</p>
+            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
             <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect curl&#8217;s User-Agent or response-read timing and serve different content to a pipe than to a browser. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
           </div>
         </li>
         <li>
@@ -1195,6 +1246,14 @@
         </div>
       </section>
 
+      <section>
+        <h2>Common Objection</h2>
+        <div class="faq">
+          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
+          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+        </div>
+      </section>
+
       <footer>
         <p>Inspirado por <a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> y <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a>.</p>
         <p>Comparte esta página la próxima vez que alguien pegue un <code>curl | bash</code> en el chat de tu equipo.</p>
@@ -1226,14 +1285,14 @@
           <span class="icon">&#9889;</span>
           <div class="body">
             <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. A dropped connection leaves partial execution &#8212; commands ran, cleanup didn&#8217;t.</p>
+            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
             <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect curl&#8217;s User-Agent or response-read timing and serve different content to a pipe than to a browser. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
           </div>
         </li>
         <li>
@@ -1354,6 +1413,14 @@
         </div>
       </section>
 
+      <section>
+        <h2>Common Objection</h2>
+        <div class="faq">
+          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
+          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+        </div>
+      </section>
+
       <footer>
         <p>Inspirado por <a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> e <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a>.</p>
         <p>Compartilhe esta página na próxima vez que alguém colar um <code>curl | bash</code> no chat da equipe.</p>
@@ -1385,14 +1452,14 @@
           <span class="icon">&#9889;</span>
           <div class="body">
             <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. A dropped connection leaves partial execution &#8212; commands ran, cleanup didn&#8217;t.</p>
+            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
             <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect curl&#8217;s User-Agent or response-read timing and serve different content to a pipe than to a browser. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
           </div>
         </li>
         <li>
@@ -1513,6 +1580,14 @@
         </div>
       </section>
 
+      <section>
+        <h2>Common Objection</h2>
+        <div class="faq">
+          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
+          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+        </div>
+      </section>
+
       <footer>
         <p>Ispirato da <a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> e <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a>.</p>
         <p>Condividi questa pagina la prossima volta che qualcuno incolla un <code>curl | bash</code> nella chat del team.</p>
@@ -1544,14 +1619,14 @@
           <span class="icon">&#9889;</span>
           <div class="body">
             <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. A dropped connection leaves partial execution &#8212; commands ran, cleanup didn&#8217;t.</p>
+            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
             <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect curl&#8217;s User-Agent or response-read timing and serve different content to a pipe than to a browser. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
           </div>
         </li>
         <li>
@@ -1672,6 +1747,14 @@
         </div>
       </section>
 
+      <section>
+        <h2>Common Objection</h2>
+        <div class="faq">
+          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
+          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+        </div>
+      </section>
+
       <footer>
         <p>Zainspirowane przez <a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> i <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a>.</p>
         <p>Udostępnij tę stronę gdy ktoś wklei <code>curl | bash</code> na czacie zespołu.</p>
@@ -1703,14 +1786,14 @@
           <span class="icon">&#9889;</span>
           <div class="body">
             <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. A dropped connection leaves partial execution &#8212; commands ran, cleanup didn&#8217;t.</p>
+            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
             <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect curl&#8217;s User-Agent or response-read timing and serve different content to a pipe than to a browser. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
           </div>
         </li>
         <li>
@@ -1831,6 +1914,14 @@
         </div>
       </section>
 
+      <section>
+        <h2>Common Objection</h2>
+        <div class="faq">
+          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
+          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+        </div>
+      </section>
+
       <footer>
         <p><a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> ve <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a> tarafından ilham alındı.</p>
         <p>Ekip sohbetinize biri <code>curl | bash</code> yapıştırdığında bu sayfayı paylaşın.</p>
@@ -1862,14 +1953,14 @@
           <span class="icon">&#9889;</span>
           <div class="body">
             <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. A dropped connection leaves partial execution &#8212; commands ran, cleanup didn&#8217;t.</p>
+            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
             <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect curl&#8217;s User-Agent or response-read timing and serve different content to a pipe than to a browser. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
           </div>
         </li>
         <li>
@@ -1990,6 +2081,14 @@
         </div>
       </section>
 
+      <section>
+        <h2>Common Objection</h2>
+        <div class="faq">
+          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
+          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
+        </div>
+      </section>
+
       <footer>
         <p>受 <a href="https://nohello.net/en/" target="_blank" rel="noopener">nohello.net</a> 和 <a href="https://noslopgrenade.com/" target="_blank" rel="noopener">noslopgrenade.com</a> 启发。</p>
         <p>下次有人在团队聊天中粘贴 <code>curl | bash</code> 时，分享这个页面。</p>
@@ -2021,14 +2120,14 @@
           <span class="icon">&#9889;</span>
           <div class="body">
             <strong>Bash starts before the download finishes</strong>
-            <p>The pipe is live. Bash receives and executes lines as they arrive. A dropped connection leaves partial execution &#8212; commands ran, cleanup didn&#8217;t.</p>
+            <p>The pipe is live. Bash receives and executes lines as they arrive. Drop the connection mid-transfer and you get partial execution: a command like <code>rm -r /usr/share/program</code> can truncate to <code>rm -r /usr</code>. Commands ran, cleanup didn&#8217;t.</p>
           </div>
         </li>
         <li>
           <span class="icon">&#127917;</span>
           <div class="body">
             <strong>The server knows you&#8217;re piping &#8212; and can lie</strong>
-            <p>Servers detect curl&#8217;s User-Agent or response-read timing and serve different content to a pipe than to a browser. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
+            <p>Servers detect the curl User-Agent or use timing: send a <code>sleep</code> command early in the script &#8212; if bash is executing it, pipe reads pause, curl blocks, and the server observes the delay. Confirmed execution. Then serve a different payload. &#8220;I&#8217;ll read it in the browser first&#8221; doesn&#8217;t protect you: what you read is not what ran.</p>
           </div>
         </li>
         <li>
@@ -2146,6 +2245,14 @@
   <span class="prompt">$ </span><span class="cmd">bash</span> <span class="url">install.sh</span>
 </div>
         </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Common Objection</h2>
+        <div class="faq">
+          <p class="faq-q">&#8220;But I trust the vendor, so it&#8217;s fine, right?&#8221;</p>
+          <p class="faq-a">Trusting the vendor is necessary but not sufficient. <code>curl | bash</code> adds attack surface <em>on top of</em> that trust: you also trust DNS, the CDN, the hosting provider, and anyone who might compromise the URL between now and the moment you run it. A package installed through a package manager goes through additional verification layers. The vendor being reputable doesn&#8217;t make the delivery mechanism safe.</p>
         </div>
       </section>
 
