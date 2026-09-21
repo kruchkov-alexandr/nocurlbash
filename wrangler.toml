@@ -1,0 +1,16 @@
+name = "nocurlbash"
+main = "src/index.js"
+workers_dev = false
+
+compatibility_date = "2026-08-07"
+compatibility_flags = ["nodejs_compat"]
+
+# nocurlbash.com is bound to this script as a Workers Custom Domain
+# (dash.cloudflare.com -> Workers & Pages -> nocurlbash -> Settings ->
+# Domains & Routes), not a zone Route -- nothing to declare here for that;
+# it's a separate resource that persists across deploys by script name.
+
+[assets]
+binding = "ASSETS"
+directory = "public"
+run_worker_first = true
